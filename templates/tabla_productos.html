@@ -6,6 +6,17 @@
 /* =========================================================
 CONTENEDOR GENERAL
 ========================================================= */
+.form-eliminar {
+    margin: 0;
+    padding: 0;
+}
+
+.form-eliminar .btn-eliminar {
+    width: 82px;
+    height: 30px;
+    padding: 0;
+    font-family: inherit;
+}
 
 .productos-container {
 padding: 30px;
@@ -1067,14 +1078,24 @@ RESPONSIVE
 
                         <div class="acciones">
 
-                            <a
-                                href="{{ url_for('eliminar_producto', id=producto.id) }}"
-                                class="btn-eliminar"
-                                onclick="confirmarEliminar(event, this.href)"
+                            <!-- ELIMINAR -->
+                            <form
+                                action="{{ url_for('eliminar_producto', id=producto.id) }}"
+                                method="POST"
+                                class="form-eliminar"
                             >
-                                🗑 Eliminar
-                            </a>
 
+                                <button
+                                    type="button"
+                                    class="btn-eliminar"
+                                    onclick="confirmarEliminar(this.form)"
+                                >
+                                    🗑 Eliminar
+                                </button>
+
+                            </form>
+
+                            <!-- EDITAR -->
                             <a
                                 href="{{ url_for('actualizar_producto', id=producto.id) }}"
                                 class="btn-editar"
@@ -1149,42 +1170,37 @@ RESPONSIVE
 CONFIRMAR ELIMINACIÓN
 ========================================================= */
 
-function confirmarEliminar(event, url) {
+function confirmarEliminar(form) {
 
-event.preventDefault();
+    Swal.fire({
 
-Swal.fire({
+        title: '¿Eliminar producto?',
 
-    title: '¿Eliminar producto?',
+        text: 'El producto será marcado como inactivo y se registrará una salida.',
 
-    text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
 
-    icon: 'warning',
+        showCancelButton: true,
 
-    showCancelButton: true,
+        confirmButtonColor: '#dc2626',
 
-    confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#64748b',
 
-    cancelButtonColor: '#64748b',
+        confirmButtonText: 'Sí, eliminar',
 
-    confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
 
-    cancelButtonText: 'Cancelar',
+        background: '#ffffff'
 
-    background: '#ffffff',
+    }).then((result) => {
 
-    borderRadius: '18px'
+        if (result.isConfirmed) {
 
-}).then((result) => {
+            form.submit();
 
-    if (result.isConfirmed) {
+        }
 
-        window.location.href = url;
-
-    }
-
-});
-
+    });
 }
 
 /* =========================================================

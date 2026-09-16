@@ -1,4 +1,6 @@
 import datetime
+
+from flask_login import current_user, login_required
 from src.app import app
 from flask import render_template, request, redirect, url_for, flash
 from flask_controller import FlaskController
@@ -28,45 +30,37 @@ def movimientos():
 @app.route("/movimientos/agregar_movimiento", methods=["GET", "POST"])
 def agregar_movimiento():
 
+    usuarios = session.query(Usuarios).all()
+    productos = session.query(Productos).all()
+
     if request.method == "POST":
-
-        tipo_de_movimiento = "Entrada"
-
-        usuarios = session.query(Usuarios).all()
-        
 
         movimiento = Movimientos(
             usuario_id=request.form["usuario_id"],
             producto_id=request.form["producto_id"],
             cantida_stock=request.form["cantida_stock"],
             valor_unitario=request.form["valor_unitario"],
-            tipo_de_movimiento=tipo_de_movimiento,
-            fecha=datetime.utcnow(),
+            tipo_de_movimiento="Entrada",
+            fecha=datetime.datetime.now(),
             activo=True
         )
-        print("Entró al POST")
-        print(request.form)
+
+        print("========== NUEVO MOVIMIENTO ==========")
+        print("Usuario:", movimiento.usuario_id)
+        print("Producto:", movimiento.producto_id)
+        print("Cantidad:", movimiento.cantida_stock)
+        print("Tipo:", movimiento.tipo_de_movimiento)
+        print("======================================")
 
         session.add(movimiento)
         session.commit()
 
         return redirect(url_for("movimientos"))
-    
-
-    if tipo_de_movimiento == "Entrada":
-        
-            tipo = "Entrada"
-    else:
-            tipo_de_movimiento= "Salida"
-
-    usuarios = session.query(Usuarios).all()
-    productos = session.query(Productos).all()
 
     return render_template(
         "formulario_crear_movimiento.html",
         usuarios=usuarios,
         productos=productos,
-        tipo=tipo
+        tipo="Entrada"
     )
 
-       

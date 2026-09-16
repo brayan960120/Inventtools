@@ -1,76 +1,81 @@
-from flask import url_for, redirect
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from sqlalchemy import Boolean, Column, Integer, String, Float, ForeignKey
-from src.models import session, Base
-from sqlalchemy import Column, Integer, String, Float, DateTime
-from datetime import datetime
-from src.models.detalle_facturas import DetalleFacturas
-from src.models.productos import Productos
-from src.models import session as db_session
+
+from flask_login import current_user
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String
+)
+
 from sqlalchemy.orm import relationship
 
-
+from src.models import Base, session
 
 
 class Movimientos(Base):
-    __tablename__ = 'movimientos'
 
-    id = Column(Integer, primary_key=True)
+    __tablename__ = "movimientos"
+
+    id = Column(
+        Integer,
+        primary_key=True
+    )
+
     usuario_id = Column(
         Integer,
-        ForeignKey('usuarios.id'),
+        ForeignKey("usuarios.id"),
         nullable=False
     )
+
     producto_id = Column(
         Integer,
-        ForeignKey('productos.id'),
+        ForeignKey("productos.id"),
         nullable=False
     )
-    cantida_stock = Column(Integer, nullable=False)
-    valor_unitario = Column(Float, nullable=False)
-    tipo_de_movimiento = Column(String(20), nullable=False)
-    fecha = Column(DateTime, default=datetime.now)
-    activo = Column(Boolean, default=True)
+
+    cantida_stock = Column(
+        Integer,
+        nullable=False
+    )
+
+    valor_unitario = Column(
+        Float,
+        nullable=False
+    )
+
+    tipo_de_movimiento = Column(
+        String(20),
+        nullable=False
+    )
+
+    fecha = Column(
+        DateTime,
+        default=datetime.now
+    )
+
+    activo = Column(
+        Boolean,
+        default=True
+    )
+
     usuario = relationship(
-        'Usuarios',
-        back_populates='movimientos'
+        "Usuarios",
+        back_populates="movimientos"
     )
 
-
-    
-
-
-def obtener_movimientos():
-
-    from src.models.usuarios import Usuarios
-
-    movimientos = (
-        db_session.query(Movimientos)
-        .join(
-            Usuarios,
-            Movimientos.usuario_id == Usuarios.id
-        )
-        .order_by(
-            Movimientos.fecha.asc()
-        )
-        .all()
+def registrar_movimiento_actualizacion(producto):
+    movimiento = Movimientos(
+        usuario_id=current_user.id,
+        producto_id=producto.id,
+        cantida_stock=producto.cantida_stock,
+        valor_unitario=producto.valor_unitario,
+        tipo_de_movimiento="Actualización",
+        fecha=datetime.datetime.now(),
+        activo=True
     )
 
-    return movimientos
-
-
-def agregar_movimiento(movimiento):
-    db_session.add(movimiento)
-    db_session.commit()
-    return redirect(url_for('movimientos'))
- 
-
-def obtener_tipo(es_compra):
-    return "Entrada" if es_compra else "Salida"
-
-
-  
-    
-  
-    
+    session.add(movimiento)

@@ -1,3 +1,5 @@
+import datetime
+from sqlalchemy import select
 from sqlalchemy import false, true
 from src.models import session, Base
 from sqlalchemy import Column, Integer, String, Float, ForeignKey,true
@@ -15,6 +17,7 @@ from flask import session as flask_session
 from src.models import session as db_session
 import os
 from werkzeug.utils import secure_filename
+from flask_login import login_required, current_user
 
 
 class ProductosController(FlaskController):
@@ -116,7 +119,7 @@ class ProductosController(FlaskController):
                 producto_id=producto.id,
                 cantida_stock=producto.cantida_stock,
                 valor_unitario=producto.valor_unitario,
-                tipo_de_movimiento='entrada',
+                tipo_de_movimiento='Entrada',
                 activo=True
             )
 
@@ -163,34 +166,48 @@ class ProductosController(FlaskController):
             productos=productos
         )
     
-        
-    @app.route('/eliminar_producto/<id>')
-    def eliminar_producto(id):
-        producto = db_session.query(Productos).filter_by(id=id, activo=True).first()
 
-        if not producto:
-            return redirect(url_for('ver_productos'))       
-        
-        usuario = db_session.query(Usuarios).first()  # Obtener el primer usuario de la base de datos
-                
+    @app.route("/eliminar_producto/<int:id>", methods=["POST"])
+    @login_required
+    def eliminar_producto(id):
+
+        producto = db_session.get(Productos, id)
+
+        print("========== ELIMINAR PRODUCTO ==========")
+        print("ID recibido:", id)
+        print("Producto:", producto)
+        print("Tipo:", type(producto))
+        print("=======================================")
+
+        if producto is None:
+            flash("El producto no existe.")
+            return redirect(url_for("ver_productos"))
+
         movimiento = Movimientos(
+            usuario_id=current_user.id,
             producto_id=producto.id,
-            usuario_id=usuario.id,
             cantida_stock=producto.cantida_stock,
             valor_unitario=producto.valor_unitario,
             tipo_de_movimiento="Salida",
-            activo=False
-            )
-        
+            fecha=datetime.datetime.now(),
+            activo=True
+        )
+
         db_session.add(movimiento)
 
         producto.activo = False
+
         db_session.commit()
-        
-        return redirect(url_for('ver_productos'))
-    
+
+        flash(
+            f"Producto '{producto.descripcion}' eliminado correctamente."
+        )
+
+        return redirect(url_for("ver_productos"))
+
 
     @app.route('/actualizar_producto/<id>', methods=['GET', 'POST'])
+    @login_required
     def actualizar_producto(id):
 
         if 'email' not in session:
@@ -198,6 +215,11 @@ class ProductosController(FlaskController):
                 'formulario_login.html',
                 titulo_pagina='Login'
             )
+
+        # Buscar usuario que está realizando la actualización
+        usuario = db_session.query(Usuarios).filter_by(
+            email=session["email"]
+        ).first()
 
         if request.method == 'GET':
 
@@ -214,33 +236,98 @@ class ProductosController(FlaskController):
 
         if request.method == 'POST':
 
+    # -----------------------------------------
+    # BUSCAR PRODUCTO ACTUAL
+    # -----------------------------------------
+
+            producto_actual = db_session.get(Productos, id)
+
+            if producto_actual is None:
+                flash("El producto no existe.")
+                return redirect(url_for("ver_productos"))
+
+            # Guardamos los valores anteriores
+            stock_anterior = producto_actual.cantida_stock
+            precio_anterior = producto_actual.valor_unitario
+            descripcion_anterior = producto_actual.descripcion
+            unidad_anterior = producto_actual.unidad_medida
+            categoria_anterior = producto_actual.categoria
+
+        # -----------------------------------------
+        # DATOS NUEVOS DEL FORMULARIO
+        # -----------------------------------------
+
             descripcion = request.form.get('descripcion')
             valor_unitario = request.form.get('valor_unitario')
             unidad_medida = request.form.get('unidad_medida')
             cantida_stock = request.form.get('cantida_stock')
             categoria = request.form.get('categoria')
-            activo = request.form.get('activo') == 'true'
 
-        # Obtener la imagen
+        # Convertir números
+            stock_nuevo = int(cantida_stock)
+            precio_nuevo = float(valor_unitario)
+
+        # Imagen
             imagen = request.files.get('imagen')
+
+        # -----------------------------------------
+        # ACTUALIZAR PRODUCTO
+        # -----------------------------------------
 
             producto_modificar = Productos(
                 descripcion,
-                valor_unitario,
+                precio_nuevo,
                 unidad_medida,
-                cantida_stock,
+                stock_nuevo,
                 categoria,
                 True
             )
 
-        # Pasar la imagen
             Productos.actualizar_producto(
                 producto_modificar,
                 id,
                 imagen
             )
 
-            return redirect(url_for('ver_productos'))
+        # -----------------------------------------
+        # DETERMINAR TIPO DE MOVIMIENTO
+        # -----------------------------------------
+
+            if stock_nuevo > stock_anterior:
+
+                tipo_movimiento = "Entrada"
+
+            elif stock_nuevo < stock_anterior:
+
+                tipo_movimiento = "Salida"
+
+            else:
+
+                tipo_movimiento = "Actualización"
+
+        # -----------------------------------------
+        # CREAR MOVIMIENTO
+        # -----------------------------------------
+
+            movimiento = Movimientos(
+                usuario_id=usuario.id,
+                producto_id=id,
+                cantida_stock=stock_nuevo,
+                valor_unitario=precio_nuevo,
+                tipo_de_movimiento=tipo_movimiento,
+                fecha=datetime.datetime.now(),
+                activo=True
+            )
+
+            db_session.add(movimiento)
+            db_session.commit()
+
+            flash(
+                f"Producto '{descripcion}' actualizado correctamente."
+            )
+
+            return redirect(url_for("ver_productos"))
+
 
         
    

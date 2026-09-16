@@ -1,7 +1,9 @@
 import os
 from xmlrpc.client import boolean
+from flask_login import login_required
+from flask_login import login_required
 from werkzeug.utils import secure_filename
-from flask import redirect, url_for, render_template, request, session
+from flask import flash, redirect, url_for, render_template, request, session
 from sqlalchemy import Boolean, Column, Integer, String, Float, ForeignKey
 from sqlalchemy_serializer import SerializerMixin
 from src.models import session, Base
@@ -54,12 +56,47 @@ class Productos(Base,SerializerMixin):
         session.commit()
         return producto
 
+    from datetime import datetime
+    from flask_login import login_required, current_user
+    from src.models.movimientos import Movimientos
+
+    @login_required
     def eliminar_producto(id):
+
         producto = session.get(Productos, id)
 
-        if producto:
-            producto.activo = False
-            session.commit()
+        if not producto:
+            flash("El producto no existe.")
+            return False
+
+    # Crear movimiento de salida
+        movimiento = Movimientos(
+            usuario_id=current_user.id,
+            producto_id=producto.id,
+            cantida_stock=producto.cantida_stock,
+            valor_unitario=producto.valor_unitario,
+            tipo_de_movimiento="Salida",
+            fecha=datetime.now(),
+            activo=True
+        )
+
+    # Guardar movimiento
+        session.add(movimiento)
+
+    # Desactivar producto
+        producto.activo = False
+
+    # Guardar ambos cambios
+        session.commit()
+
+        print(
+            "Salida registrada por:",
+            current_user.id,
+            current_user.nombre_completo
+        )
+
+        return producto
+
 
     def actualizar_producto(producto, id, imagen=None):
 
@@ -91,9 +128,9 @@ class Productos(Base,SerializerMixin):
 
             producto_modificar.imagen = nombre_archivo
 
-        db_session.commit()
-
-        return producto_modificar         
+        # NO hacer commit aquí
+        return producto_modificar
+  
 
     @classmethod
     def obtener_producto_por_id(cls, id):
