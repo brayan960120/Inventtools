@@ -1,25 +1,485 @@
 {% extends 'layout.html' %}
 
 {% block contenido %}
-  <h1 class="font-weight-bold text-center text-capitalize " style="transition: opacity 0.3s;"
-    onmouseover="this.style.opacity='0'"
-    onmouseout="this.style.opacity='1'">
-    Inventario
-  </h1>
-  <a class="dropdown-item" href="/crear_producto" style="padding:12px 25px; background-color:white; color:black;"
-    onmouseover="this.style.backgroundColor='#007bff'; this.style.color='white';"
-    onmouseout="this.style.backgroundColor='white'; this.style.color='black';">
-    Agregar Producto
-  </a>
-  </a>
-  <a class="dropdown-item" href="/ver_productos" style="padding:12px 25px; background-color:white; color:black;"
-    onmouseover="this.style.backgroundColor='#007bff'; this.style.color='white';"
-    onmouseout="this.style.backgroundColor='white'; this.style.color='black';">
-    Lista de Productos
-  </a>
-  <a class="dropdown-item" href="/movimientos" style="padding:12px 25px; background-color:white; color:black;"
-    onmouseover="this.style.backgroundColor='#007bff'; this.style.color='white';"
-    onmouseout="this.style.backgroundColor='white'; this.style.color='black';">
-    Movimientos
-  </a>
+
+<style>
+
+    /* =========================================
+       CONTENEDOR INVENTARIO
+    ========================================= */
+
+    .inventario-container {
+
+        width: 100%;
+
+        max-width: 1000px;
+
+        margin: 0 auto;
+
+        padding: 20px;
+
+        text-align: center;
+
+    }
+
+
+    /* =========================================
+       TITULO
+    ========================================= */
+
+    .inventario-titulo {
+
+        color: white;
+
+        font-size: 3rem;
+
+        font-weight: 800;
+
+        margin-bottom: 45px;
+
+        text-shadow:
+            0 3px 5px rgba(0,0,0,.35),
+            0 8px 18px rgba(0,0,0,.25);
+
+    }
+
+
+    .inventario-titulo i {
+
+        color: #baffd8;
+
+        margin-right: 12px;
+
+        text-shadow:
+            0 4px 8px rgba(0,0,0,.35);
+
+    }
+
+
+    /* =========================================
+       MENU
+    ========================================= */
+
+    .inventario-menu {
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+        gap: 30px;
+
+    }
+
+
+    /* =========================================
+       TARJETAS
+    ========================================= */
+
+    .inventario-card {
+
+        position: relative;
+
+        min-height: 260px;
+
+        padding: 30px 20px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        justify-content: center;
+
+        text-align: center;
+
+        text-decoration: none !important;
+
+        color: white !important;
+
+        background:
+            linear-gradient(
+                145deg,
+                #099b50,
+                #05783d,
+                #034d29
+            );
+
+        border-radius: 20px;
+
+        border:
+            1px solid
+            rgba(255,255,255,.25);
+
+        box-shadow:
+
+            0 8px 0 #02371d,
+
+            0 20px 35px
+            rgba(0,0,0,.30),
+
+            inset 0 2px 4px
+            rgba(255,255,255,.20);
+
+        transition:
+            all .3s ease;
+
+        overflow: hidden;
+
+    }
+
+
+    /* =========================================
+       BRILLO
+    ========================================= */
+
+    .inventario-card::before {
+
+        content: "";
+
+        position: absolute;
+
+        width: 180px;
+
+        height: 180px;
+
+        top: -90px;
+
+        left: -90px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(255,255,255,.13);
+
+        filter: blur(10px);
+
+        pointer-events: none;
+
+    }
+
+
+    /* =========================================
+       ICONO 3D
+    ========================================= */
+
+    .inventario-icon {
+
+        width: 100px;
+
+        height: 100px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        margin-bottom: 22px;
+
+        border-radius: 50%;
+
+        background:
+            linear-gradient(
+                145deg,
+                #70f0a8,
+                #15bb63,
+                #05783d
+            );
+
+        color: white;
+
+        font-size: 42px;
+
+        border:
+            2px solid
+            rgba(255,255,255,.35);
+
+        box-shadow:
+
+            0 8px 0 #02542b,
+
+            0 15px 25px
+            rgba(0,0,0,.35),
+
+            inset 0 5px 8px
+            rgba(255,255,255,.40);
+
+        text-shadow:
+            0 3px 5px rgba(0,0,0,.35);
+
+        transition:
+            all .35s ease;
+
+    }
+
+
+    /* =========================================
+       TEXTO
+    ========================================= */
+
+    .inventario-card h3 {
+
+        margin: 0;
+
+        color: white;
+
+        font-size: 1.3rem;
+
+        font-weight: 800;
+
+        text-shadow:
+            0 2px 4px rgba(0,0,0,.35);
+
+    }
+
+
+    .inventario-card p {
+
+        margin-top: 10px;
+
+        margin-bottom: 0;
+
+        color:
+            rgba(255,255,255,.82);
+
+        font-size: .95rem;
+
+    }
+
+
+    /* =========================================
+       HOVER
+    ========================================= */
+
+    .inventario-card:hover {
+
+        color: white;
+
+        transform:
+            translateY(-12px)
+            scale(1.02);
+
+        background:
+            linear-gradient(
+                145deg,
+                #10ad59,
+                #078c48,
+                #056333
+            );
+
+        box-shadow:
+
+            0 13px 0 #02371d,
+
+            0 30px 50px
+            rgba(0,0,0,.40);
+
+    }
+
+
+    .inventario-card:hover
+    .inventario-icon {
+
+        transform:
+            translateY(-7px)
+            rotateX(12deg)
+            rotateY(-12deg)
+            scale(1.08);
+
+        box-shadow:
+
+            0 11px 0 #02542b,
+
+            0 22px 30px
+            rgba(0,0,0,.40),
+
+            inset 0 6px 10px
+            rgba(255,255,255,.45);
+
+    }
+
+
+    /* =========================================
+       CLICK
+    ========================================= */
+
+    .inventario-card:active {
+
+        transform:
+            translateY(5px)
+            scale(.99);
+
+        box-shadow:
+
+            0 3px 0 #02371d,
+
+            0 8px 15px
+            rgba(0,0,0,.25);
+
+    }
+
+
+    /* =========================================
+       RESPONSIVE
+    ========================================= */
+
+    @media (max-width: 768px) {
+
+        .inventario-menu {
+
+            grid-template-columns: 1fr;
+
+            max-width: 450px;
+
+            margin: auto;
+
+        }
+
+
+        .inventario-titulo {
+
+            font-size: 2.3rem;
+
+            margin-bottom: 35px;
+
+        }
+
+
+        .inventario-card {
+
+            min-height: 220px;
+
+        }
+
+    }
+
+
+    @media (max-width: 480px) {
+
+        .inventario-container {
+
+            padding: 10px;
+
+        }
+
+
+        .inventario-titulo {
+
+            font-size: 2rem;
+
+        }
+
+
+        .inventario-icon {
+
+            width: 85px;
+
+            height: 85px;
+
+            font-size: 36px;
+
+        }
+
+    }
+
+</style>
+
+
+<!-- =========================================
+     INVENTARIO
+========================================= -->
+
+<div class="inventario-container">
+
+
+    <!-- TITULO -->
+
+    <h1 class="inventario-titulo">
+
+        <i class="fas fa-boxes-stacked"></i>
+
+        Inventario
+
+    </h1>
+
+
+    <!-- =====================================
+         TARJETAS
+    ====================================== -->
+
+    <div class="inventario-menu">
+
+
+        <!-- AGREGAR PRODUCTO -->
+
+        <a href="/crear_producto"
+           class="inventario-card">
+
+            <div class="inventario-icon">
+
+                <i class="fas fa-box-open"></i>
+
+            </div>
+
+            <h3>
+                Agregar Producto
+            </h3>
+
+            <p>
+                Registrar un nuevo producto
+            </p>
+
+        </a>
+
+
+        <!-- LISTA PRODUCTOS -->
+
+        <a href="/ver_productos"
+           class="inventario-card">
+
+            <div class="inventario-icon">
+
+                <i class="fas fa-boxes-stacked"></i>
+
+            </div>
+
+            <h3>
+                Lista de Productos
+            </h3>
+
+            <p>
+                Consultar productos registrados
+            </p>
+
+        </a>
+
+
+        <!-- MOVIMIENTOS -->
+
+        <a href="/movimientos"
+           class="inventario-card">
+
+            <div class="inventario-icon">
+
+                <i class="fas fa-right-left"></i>
+
+            </div>
+
+            <h3>
+                Movimientos
+            </h3>
+
+            <p>
+                Ver entradas y salidas
+            </p>
+
+        </a>
+
+
+    </div>
+
+</div>
+
 {% endblock contenido %}

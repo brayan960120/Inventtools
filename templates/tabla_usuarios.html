@@ -1,68 +1,249 @@
 {% extends 'layout.html' %}
 
 {% block contenido %}
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">id</th>
-      <th scope="col">Nombre completo</th>
-      <th scope="col">Email</th>      
-      <th scope="col">Contraseña</th>   
-      <th scope="col">Rol</th>
-      <th scope="col">Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-      {% for usuario in usuarios %}
-        <tr>
-          <th scope="row">{{usuario.id}}</th>
-          <td>{{usuario.nombre_completo}}</td>
-          <td>{{usuario.email}}</td>
-          <td>{{usuario.contraseña}}</td>
-          <td>{{usuario.rol}}</td>
-          <td>
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <a class="btn btn-danger d-flex justify-content-center align-items-center" href="/eliminar_usuario/{{usuario.id}}" class="btn btn-danger d-flex justify-content-center align-items-center"
-              onclick="confirmarEliminar(event, this.href)"
-              style="width:80px; height:30px; font-size:12px; padding:2px 8px;">
-              Eliminar
-            </a>
-            <script>
-              function confirmarEliminar(event, url) {
-                  event.preventDefault();
 
-                  Swal.fire({
-                    title: '¿Eliminar usuario?',
-                    ext: 'Esta acción no se puede deshacer.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-              if (result.isConfirmed) {
-              window.location.href = url;
-              }
-              });
-              }
-            </script>
-            <a class="btn btn-success d-flex justify-content-center align-items-center" href="/actualizar_usuario/{{usuario.id}}" style="width:80px; height:30px; font-size:12px; padding:2px 8px;">
-              Editar
-            </a>
-          </td>
-        </tr>
-      {% endfor %}    
-  </tbody>
-</table>
-{% endblock contenido %}    
-     
+<style> /* ========================================================= CONTENEDOR PRINCIPAL ========================================================= */ .usuarios-container { min-height: 100vh; padding: 35px; background: radial-gradient( circle at 10% 10%, rgba(59,130,246,.13), transparent 30% ), radial-gradient( circle at 90% 90%, rgba(124,58,237,.10), transparent 30% ), linear-gradient( 135deg, #eef2f7, #dce5ef ); } /* ========================================================= ENCABEZADO ========================================================= */ .usuarios-header { margin-bottom: 25px; } .usuarios-header h2 { margin: 0; color: #172033; font-size: 29px; font-weight: 900; letter-spacing: -.5px; text-shadow: 1px 2px 3px rgba(0,0,0,.12); } .usuarios-header p { margin-top: 7px; margin-bottom: 0; color: #64748b; font-size: 14px; } /* ========================================================= MENSAJES ========================================================= */ .flashes { list-style: none; padding: 0; margin: 0 0 20px; } .flashes li { padding: 14px 18px; margin-bottom: 10px; border-radius: 13px; color: #1e40af; font-weight: 700; background: linear-gradient( 135deg, #dbeafe, #eff6ff ); border-left: 5px solid #2563eb; box-shadow: 0 7px 15px rgba(37,99,235,.12), inset 0 1px 1px white; } /* ========================================================= TARJETA 3D ========================================================= */ .usuarios-card { max-width: 1200px; margin: 0 auto; padding: 22px; border-radius: 24px; background: rgba(255,255,255,.95); border: 1px solid rgba(255,255,255,.9); box-shadow: 0 10px 20px rgba(15,23,42,.08), 0 25px 50px rgba(15,23,42,.11), 0 40px 80px rgba(15,23,42,.07), inset 0 1px 0 rgba(255,255,255,.9); transition: .3s ease; } .usuarios-card:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(15,23,42,.10), 0 30px 60px rgba(15,23,42,.14); } /* ========================================================= CABECERA DE TARJETA ========================================================= */ .usuarios-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid #e2e8f0; } .usuarios-titulo { display: flex; align-items: center; gap: 12px; } .usuarios-icono { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 14px; color: white; font-size: 21px; background: linear-gradient( 135deg, #2563eb, #4f46e5 ); box-shadow: 0 7px 15px rgba(37,99,235,.30), inset 0 1px 2px rgba(255,255,255,.45); } .usuarios-titulo strong { display: block; color: #172033; font-size: 18px; font-weight: 900; } .usuarios-titulo small { color: #94a3b8; font-size: 12px; } /* ========================================================= CONTADOR ========================================================= */ .usuarios-count { padding: 9px 15px; border-radius: 12px; color: #1d4ed8; font-size: 12px; font-weight: 900; background: linear-gradient( 135deg, #dbeafe, #bfdbfe ); box-shadow: inset 0 1px 1px white, 0 4px 8px rgba(37,99,235,.10); } /* ========================================================= TABLA ========================================================= */ .tabla-responsive { overflow-x: auto; padding: 4px; } .tabla-usuarios { width: 100%; border-collapse: separate; border-spacing: 0 9px; } /* ========================================================= CABECERA TABLA ========================================================= */ .tabla-usuarios thead th { padding: 15px; color: #e2e8f0; background: linear-gradient( 135deg, #172033, #334155 ); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .7px; border: none; box-shadow: inset 0 1px 1px rgba(255,255,255,.12), 0 5px 10px rgba(15,23,42,.15); } .tabla-usuarios thead th:first-child { border-radius: 13px 0 0 13px; } .tabla-usuarios thead th:last-child { border-radius: 0 13px 13px 0; } /* ========================================================= FILAS ========================================================= */ .tabla-usuarios tbody tr { transition: transform .25s ease, box-shadow .25s ease; } .tabla-usuarios tbody tr:hover { transform: translateY(-3px) scale(1.004); box-shadow: 0 8px 18px rgba(15,23,42,.12), 0 18px 30px rgba(15,23,42,.08); } .tabla-usuarios tbody td { padding: 14px 15px; background: white; border-top: 1px solid #edf1f6; border-bottom: 1px solid #edf1f6; color: #334155; font-size: 14px; vertical-align: middle; } .tabla-usuarios tbody td:first-child { border-left: 1px solid #edf1f6; border-radius: 13px 0 0 13px; } .tabla-usuarios tbody td:last-child { border-right: 1px solid #edf1f6; border-radius: 0 13px 13px 0; } /* ========================================================= ID ========================================================= */ .usuario-id { display: inline-flex; align-items: center; justify-content: center; min-width: 42px; padding: 7px 10px; border-radius: 9px; color: #2563eb; font-weight: 900; background: linear-gradient( 135deg, #eff6ff, #dbeafe ); box-shadow: inset 0 1px 1px white, 0 3px 7px rgba(37,99,235,.12); } /* ========================================================= USUARIO ========================================================= */ .usuario-info { display: flex; align-items: center; gap: 11px; font-weight: 800; color: #1e293b; } .usuario-avatar { width: 39px; height: 39px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: white; font-size: 14px; font-weight: 900; text-transform: uppercase; background: linear-gradient( 135deg, #6366f1, #8b5cf6 ); box-shadow: 0 6px 12px rgba(99,102,241,.30), inset 0 1px 2px rgba(255,255,255,.45); } /* ========================================================= EMAIL ========================================================= */ .usuario-email { color: #475569; font-weight: 600; } /* ========================================================= CONTRASEÑA ========================================================= */ .usuario-password { color: #94a3b8; font-size: 16px; letter-spacing: 3px; font-weight: 900; } /* ========================================================= ROL ========================================================= */ .rol { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 20px; color: white; font-size: 11px; font-weight: 900; text-transform: capitalize; background: linear-gradient( 135deg, #7c3aed, #4f46e5 ); box-shadow: 0 5px 10px rgba(124,58,237,.22), inset 0 1px 2px rgba(255,255,255,.35); } /* ========================================================= ACCIONES ========================================================= */ .acciones { display: flex; gap: 8px; flex-wrap: wrap; } .btn-accion { min-width: 82px; height: 32px; padding: 0 12px; display: inline-flex; align-items: center; justify-content: center; border: none; border-radius: 9px; color: white; text-decoration: none; font-size: 11px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,.16), inset 0 1px 1px rgba(255,255,255,.3); transition: .2s ease; } .btn-accion:hover { transform: translateY(-2px); color: white; } .btn-editar { background: linear-gradient( 135deg, #22c55e, #15803d ); } .btn-eliminar { background: linear-gradient( 135deg, #ef4444, #b91c1c ); } /* ========================================================= RESPONSIVE ========================================================= */ @media (max-width: 800px) { .usuarios-container { padding: 15px; } .usuarios-card { padding: 12px; border-radius: 18px; } .usuarios-toolbar { align-items: flex-start; gap: 12px; flex-direction: column; } .acciones { flex-direction: column; align-items: flex-start; } } </style> <div class="usuarios-container">
+<!-- =====================================================
+     ENCABEZADO
+====================================================== -->
+
+<div class="usuarios-header">
+
+    <h2>
+        👥 Usuarios
+    </h2>
+
+    <p>
+        Administra los usuarios registrados en el sistema
+    </p>
+
+</div>
+
+
+<!-- =====================================================
+     MENSAJES FLASH
+====================================================== -->
+
+{% with messages = get_flashed_messages() %}
+
+    {% if messages %}
+
+        <ul class="flashes">
+
+            {% for message in messages %}
+
+                <li>
+                    ✓ {{ message }}
+                </li>
+
+            {% endfor %}
+
+        </ul>
+
+    {% endif %}
+
+{% endwith %}
+
+
+<!-- =====================================================
+     TARJETA
+====================================================== -->
+
+<div class="usuarios-card">
+
+
+    <div class="usuarios-toolbar">
+
+        <div class="usuarios-titulo">
+
+            <div class="usuarios-icono">
+                👥
+            </div>
+
+            <div>
+
+                <strong>
+                    Lista de usuarios
+                </strong>
+
+                <small>
+                    Usuarios registrados en el sistema
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="usuarios-count">
+
+            👤 {{ usuarios|length }} usuarios
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         TABLA
+    ================================================== -->
+
+    <div class="tabla-responsive">
+
+        <table class="tabla-usuarios">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Nombre completo
+                    </th>
+
+                    <th>
+                        Email
+                    </th>
+
+                    <th>
+                        Contraseña
+                    </th>
+
+                    <th>
+                        Rol
+                    </th>
+
+                    <th>
+                        Acciones
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for usuario in usuarios %}
+
+                <tr>
+
+
+                    <!-- ID -->
+
+                    <td>
+
+                        <span class="usuario-id">
+
+                            #{{ usuario.id }}
+
+                        </span>
+
+                    </td>
+
+
+                    <!-- NOMBRE -->
+
+                    <td>
+
+                        <div class="usuario-info">
+
+                            <div class="usuario-avatar">
+
+                                {{ usuario.nombre_completo[0]|upper }}
+
+                            </div>
+
+                            {{ usuario.nombre_completo }}
+
+                        </div>
+
+                    </td>
+
+
+                    <!-- EMAIL -->
+
+                    <td>
+
+                        <span class="usuario-email">
+
+                            ✉️ {{ usuario.email }}
+
+                        </span>
+
+                    </td>
+
+
+                    <!-- CONTRASEÑA -->
+
+                    <td>
+
+                        <span
+                            class="usuario-password"
+                            title="La contraseña no se muestra por seguridad"
+                        >
+                            ••••••••
+                        </span>
+
+                    </td>
+
+
+                    <!-- ROL -->
+
+                    <td>
+
+                        <span class="rol">
+
+                            👤 {{ usuario.rol }}
+
+                        </span>
+
+                    </td>
+
+
+                    <!-- ACCIONES -->
+
+                    <td>
+
+                        <div class="acciones">
+
+
+                            <a
+                                class="btn-accion btn-editar"
+                                href="/actualizar_usuario/{{ usuario.id }}"
+                            >
+                                ✏️ Editar
+                            </a>
+
+
+                            <a
+                                class="btn-accion btn-eliminar"
+                                href="/eliminar_usuario/{{ usuario.id }}"
+                                onclick="confirmarEliminar(event, this.href)"
+                            >
+                                🗑️ Eliminar
+                            </a>
+
+
+                        </div>
+
+                    </td>
+
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</div> <!-- ========================================================= SWEETALERT ========================================================= --> <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <script> function confirmarEliminar(event, url) { event.preventDefault(); Swal.fire({ title: '¿Eliminar usuario?', text: 'Esta acción no se puede deshacer.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc2626', cancelButtonColor: '#64748b', confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar', background: '#ffffff', reverseButtons: true }).then((result) => { if (result.isConfirmed) { window.location.href = url; } }); } </script>
+{% endblock contenido %}

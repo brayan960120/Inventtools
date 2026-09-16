@@ -4,7 +4,6 @@ from sqlalchemy.orm import relationship
 from flask import flash
 from src.models import session, Base
 from flask_login import UserMixin
-from src.models.movimientos import Movimientos
 from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
 
@@ -17,6 +16,10 @@ class Usuarios(Base, UserMixin):
     email = Column(String(500), unique=True, nullable=False)
     contraseña = Column(String(30), nullable=False)
     rol = Column(String(30), nullable=False)
+    movimientos = relationship(
+        'Movimientos',
+        back_populates='usuario'
+    )
     
 
    
@@ -38,14 +41,32 @@ class Usuarios(Base, UserMixin):
         return usuario
     
     def eliminar_usuario(id):
-        usuario = session.query(Usuarios).get(id) 
-        movimientos = session.query(Movimientos).filter_by(usuario_id=id).first()
+
+        from src.models.movimientos import Movimientos
+
+        usuario = session.query(Usuarios).get(id)
+
+        if not usuario:
+            flash("El usuario no existe.")
+            return False
+
+        movimientos = (
+            session.query(Movimientos)
+            .filter(Movimientos.usuario_id == id)
+            .first()
+        )
+
         if movimientos:
-            flash("No se puede eliminar el usuario porque tiene movimientos registrados.")
-            return False       
+            flash(
+                "No se puede eliminar el usuario porque tiene movimientos registrados."
+            )
+            return False
+
         session.delete(usuario)
         session.commit()
+
         return usuario
+
        
     def validar_usuario(email, contraseña):
         usuario_valido = session.query(Usuarios).filter_by(email=email).first()

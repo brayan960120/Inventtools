@@ -8,6 +8,8 @@ from datetime import datetime
 from src.models.detalle_facturas import DetalleFacturas
 from src.models.productos import Productos
 from src.models import session as db_session
+from sqlalchemy.orm import relationship
+
 
 
 
@@ -30,6 +32,10 @@ class Movimientos(Base):
     tipo_de_movimiento = Column(String(20), nullable=False)
     fecha = Column(DateTime, default=datetime.now)
     activo = Column(Boolean, default=True)
+    usuario = relationship(
+        'Usuarios',
+        back_populates='movimientos'
+    )
 
 
     
@@ -38,12 +44,18 @@ class Movimientos(Base):
 def obtener_movimientos():
 
     from src.models.usuarios import Usuarios
-    movimientos =(
+
+    movimientos = (
         db_session.query(Movimientos)
-        .join(Usuarios, Movimientos.usuario_id == Usuarios.id)
-        .join(Productos, Movimientos.producto_id == Productos.id)
-        .order_by(Movimientos.fecha.asc())
-        .all())
+        .join(
+            Usuarios,
+            Movimientos.usuario_id == Usuarios.id
+        )
+        .order_by(
+            Movimientos.fecha.asc()
+        )
+        .all()
+    )
 
     return movimientos
 

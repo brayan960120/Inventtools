@@ -1,22 +1,143 @@
 {% extends 'layout.html' %}
 
 {% block contenido %}
+
+<style> /* ========================================================= CONTENEDOR PRINCIPAL ========================================================= */ .categoria-container { min-height: 100vh; padding: 35px; background: radial-gradient( circle at 10% 10%, rgba(59,130,246,.13), transparent 30% ), radial-gradient( circle at 90% 90%, rgba(139,92,246,.10), transparent 30% ), linear-gradient( 135deg, #eef2f7, #dce5ef ); } /* ========================================================= ENCABEZADO ========================================================= */ .categoria-header { margin-bottom: 25px; } .categoria-header h2 { margin: 0; color: #172033; font-size: 29px; font-weight: 900; letter-spacing: -.5px; text-shadow: 1px 2px 3px rgba(0,0,0,.12); } .categoria-header p { margin-top: 7px; margin-bottom: 0; color: #64748b; font-size: 14px; } /* ========================================================= MENSAJES ========================================================= */ .flashes { list-style: none; padding: 0; margin: 0 0 20px; } .flashes li { padding: 14px 18px; margin-bottom: 10px; border-radius: 13px; color: #1e40af; font-weight: 700; background: linear-gradient( 135deg, #dbeafe, #eff6ff ); border-left: 5px solid #2563eb; box-shadow: 0 7px 15px rgba(37,99,235,.12), inset 0 1px 1px white; } /* ========================================================= TARJETA 3D ========================================================= */ .categoria-card { width: 100%; max-width: 650px; margin: 50px auto; padding: 30px; border-radius: 25px; background: rgba(255,255,255,.95); border: 1px solid rgba(255,255,255,.9); box-shadow: 0 10px 20px rgba(15,23,42,.08), 0 25px 50px rgba(15,23,42,.11), 0 40px 80px rgba(15,23,42,.07), inset 0 1px 0 rgba(255,255,255,.9); transition: .35s ease; } .categoria-card:hover { transform: translateY(-4px); box-shadow: 0 15px 25px rgba(15,23,42,.10), 0 30px 60px rgba(15,23,42,.14), 0 45px 80px rgba(15,23,42,.08); } /* ========================================================= CABECERA DE LA TARJETA ========================================================= */ .categoria-card-header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid #e2e8f0; } .categoria-icono { width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; border-radius: 16px; color: white; font-size: 24px; background: linear-gradient( 135deg, #7c3aed, #4f46e5 ); box-shadow: 0 8px 17px rgba(124,58,237,.30), inset 0 2px 3px rgba(255,255,255,.4); } .categoria-card-header strong { display: block; color: #172033; font-size: 19px; font-weight: 900; } .categoria-card-header span { display: block; margin-top: 3px; color: #94a3b8; font-size: 13px; } /* ========================================================= CAMPO ========================================================= */ .form-group { display: flex; flex-direction: column; } .form-group label { margin-bottom: 9px; color: #334155; font-size: 13px; font-weight: 800; } /* ========================================================= INPUT 3D ========================================================= */ .form-control { width: 100%; height: 48px; padding: 0 15px; border-radius: 12px; border: 1px solid #dbe2ea; outline: none; color: #334155; background: #f8fafc; box-shadow: inset 0 2px 5px rgba(15,23,42,.05), 0 1px 0 rgba(255,255,255,.8); transition: .25s ease; } .form-control:hover { background: white; border-color: #cbd5e1; } .form-control:focus { background: white; border-color: #7c3aed; transform: translateY(-1px); box-shadow: 0 0 0 3px rgba(124,58,237,.12), 0 6px 13px rgba(124,58,237,.08), inset 0 1px 2px rgba(15,23,42,.03); } /* ========================================================= ICONO DENTRO DEL CAMPO ========================================================= */ .input-wrapper { position: relative; } .input-wrapper .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #8b5cf6; font-size: 17px; pointer-events: none; } .input-wrapper .form-control { padding-left: 43px; } /* ========================================================= AYUDA ========================================================= */ .categoria-ayuda { margin-top: 8px; color: #94a3b8; font-size: 12px; } /* ========================================================= BOTONES ========================================================= */ .form-actions { display: flex; justify-content: flex-end; margin-top: 28px; padding-top: 22px; border-top: 1px solid #e2e8f0; } .btn-guardar { min-width: 140px; height: 43px; border: none; border-radius: 11px; color: white; font-size: 13px; font-weight: 900; cursor: pointer; background: linear-gradient( 135deg, #7c3aed, #4f46e5 ); box-shadow: 0 7px 14px rgba(124,58,237,.28), inset 0 1px 2px rgba(255,255,255,.35); transition: .2s ease; } .btn-guardar:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(124,58,237,.35), inset 0 1px 2px rgba(255,255,255,.35); } .btn-guardar:active { transform: translateY(1px); box-shadow: 0 3px 6px rgba(124,58,237,.25); } /* ========================================================= RESPONSIVE ========================================================= */ @media (max-width: 700px) { .categoria-container { padding: 15px; } .categoria-card { margin: 25px auto; padding: 22px; border-radius: 19px; } .categoria-header h2 { font-size: 23px; } .form-actions { justify-content: stretch; } .btn-guardar { width: 100%; } } </style> <div class="categoria-container">
+<!-- =====================================================
+     ENCABEZADO
+====================================================== -->
+
+<div class="categoria-header">
+
+    <h2>
+        🏷️ Crear Categoría
+    </h2>
+
+    <p>
+        Agrega una nueva categoría para organizar tus productos
+    </p>
+
+</div>
+
+
+<!-- =====================================================
+     MENSAJES FLASH
+====================================================== -->
+
 {% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
+
+    {% if messages %}
+
+        <ul class="flashes">
+
+            {% for message in messages %}
+
+                <li>
+                    ✓ {{ message }}
+                </li>
+
+            {% endfor %}
+
+        </ul>
+
+    {% endif %}
+
 {% endwith %}
-<form action="crear_categoria" method="post">
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        <label for="categoria">Nombre categoria</label>
-        <input type="text" class="form-control" id="categoria" name="categoria" placeholder="Nombre categoria">
-      </div>
+
+
+<!-- =====================================================
+     TARJETA
+====================================================== -->
+
+<div class="categoria-card">
+
+
+    <!-- CABECERA DE TARJETA -->
+
+    <div class="categoria-card-header">
+
+        <div class="categoria-icono">
+            🏷️
+        </div>
+
+        <div>
+
+            <strong>
+                Nueva categoría
+            </strong>
+
+            <span>
+                Ingresa el nombre de la categoría
+            </span>
+
+        </div>
+
     </div>
-    <button type="submit" class="btn btn-primary" style="width:80px; height:30px; font-size:12px; padding:2px 8px;">Guardar</button>
-</form>
+
+
+    <!-- =================================================
+         FORMULARIO
+    ================================================== -->
+
+    <form
+        action="crear_categoria"
+        method="post"
+    >
+
+
+        <div class="form-group">
+
+            <label for="categoria">
+                📝 Nombre de categoría
+            </label>
+
+
+            <div class="input-wrapper">
+
+                <span class="input-icon">
+                    🏷️
+                </span>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    id="categoria"
+                    name="categoria"
+                    placeholder="Ej: Bebidas, Aseo, Alimentos..."
+                    maxlength="100"
+                    required
+                >
+
+            </div>
+
+
+            <span class="categoria-ayuda">
+                Escribe un nombre claro para identificar fácilmente
+                los productos de esta categoría.
+            </span>
+
+        </div>
+
+
+        <!-- =================================================
+             BOTÓN
+        ================================================== -->
+
+        <div class="form-actions">
+
+            <button
+                type="submit"
+                class="btn-guardar"
+            >
+                💾 Guardar Categoría
+            </button>
+
+        </div>
+
+
+    </form>
+
+</div>
+
+</div>
 {% endblock contenido %}

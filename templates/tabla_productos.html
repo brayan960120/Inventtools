@@ -1,154 +1,1260 @@
 {% extends 'layout.html' %}
 
 {% block contenido %}
+
+<style>
+/* =========================================================
+CONTENEDOR GENERAL
+========================================================= */
+
+.productos-container {
+padding: 30px;
+min-height: 100vh;
+
+background:
+    radial-gradient(
+        circle at 10% 10%,
+        rgba(59,130,246,.12),
+        transparent 30%
+    ),
+    radial-gradient(
+        circle at 90% 90%,
+        rgba(139,92,246,.10),
+        transparent 30%
+    ),
+    linear-gradient(
+        135deg,
+        #eef2f7,
+        #dce5ef
+    );
+
+}
+
+/* =========================================================
+ENCABEZADO
+========================================================= */
+
+.productos-header {
+margin-bottom: 25px;
+}
+
+.productos-header h2 {
+margin: 0;
+
+font-size: 28px;
+font-weight: 900;
+
+color: #172033;text-shadow:
+    1px 2px 3px rgba(0,0,0,.12);
+
+}
+
+.productos-header p {
+margin-top: 6px;
+
+color: #64748b;
+font-size: 14px;
+
+}
+
+/* =========================================================
+MENSAJES
+========================================================= */
+
+.flashes {
+list-style: none;
+
+padding: 0;
+margin: 0 0 20px;
+
+}
+
+.flashes li {
+padding: 14px 18px;
+
+margin-bottom: 10px;
+
+border-radius: 13px;
+
+color: #1e40af;
+font-weight: 700;
+
+background:
+    linear-gradient(
+        135deg,
+        #dbeafe,
+        #eff6ff
+    );
+
+border-left: 5px solid #2563eb;
+
+box-shadow:
+    0 7px 15px rgba(37,99,235,.12),
+    inset 0 1px 1px white;
+
+}
+
+/* =========================================================
+TARJETA 3D
+========================================================= */
+
+.productos-card {
+
+background: rgba(255,255,255,.94);
+
+border-radius: 24px;
+
+padding: 22px;
+
+border: 1px solid rgba(255,255,255,.9);
+
+box-shadow:
+    0 8px 15px rgba(15,23,42,.08),
+    0 20px 40px rgba(15,23,42,.10),
+    0 35px 70px rgba(15,23,42,.08),
+    inset 0 1px 0 rgba(255,255,255,.9);
+
+transition: .35s ease;
+
+}
+
+.productos-card:hover {
+
+transform: translateY(-3px);
+
+box-shadow:
+    0 12px 20px rgba(15,23,42,.10),
+    0 25px 50px rgba(15,23,42,.14),
+    0 40px 80px rgba(15,23,42,.10);
+
+}
+
+/* =========================================================
+BARRA SUPERIOR
+========================================================= */
+
+.productos-toolbar {
+
+display: flex;
+
+justify-content: space-between;
+
+align-items: center;
+
+gap: 20px;
+
+margin-bottom: 20px;
+
+}
+
+/* =========================================================
+TITULO
+========================================================= */
+
+.productos-titulo {
+
+display: flex;
+
+align-items: center;
+
+gap: 12px;
+
+}
+
+.productos-icono {
+
+width: 48px;
+height: 48px;
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+border-radius: 14px;
+
+color: white;
+
+font-size: 22px;
+
+background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #4f46e5
+    );
+
+box-shadow:
+    0 7px 15px rgba(37,99,235,.30),
+    inset 0 1px 2px rgba(255,255,255,.45);
+
+}
+
+.productos-titulo strong {
+
+display: block;
+
+color: #172033;
+
+font-size: 18px;
+
+}
+
+.productos-titulo small {
+
+color: #94a3b8;
+
+}
+
+/* =========================================================
+BUSCADOR
+========================================================= */
+
+.buscador {
+
+display: flex;
+
+align-items: center;
+
+gap: 8px;
+
+}
+
+.buscador input {
+
+width: 280px;
+
+height: 40px;
+
+border: 1px solid #dbe2ea;
+
+border-radius: 11px;
+
+padding: 0 14px;
+
+outline: none;
+
+color: #334155;
+
+background: #f8fafc;
+
+box-shadow:
+    inset 0 2px 5px rgba(15,23,42,.05);
+
+transition: .25s ease;
+
+}
+
+.buscador input:focus {
+
+border-color: #3b82f6;
+
+background: white;
+
+box-shadow:
+    0 0 0 3px rgba(59,130,246,.12),
+    inset 0 2px 5px rgba(15,23,42,.03);
+
+}
+
+/* =========================================================
+BOTONES
+========================================================= */
+
+.btn-3d {
+
+height: 40px;
+
+border: none;
+
+border-radius: 11px;
+
+padding: 0 17px;
+
+color: white;
+
+font-size: 12px;
+
+font-weight: 800;
+
+cursor: pointer;
+
+text-decoration: none;
+
+display: inline-flex;
+
+align-items: center;
+
+justify-content: center;
+
+box-shadow:
+    0 5px 10px rgba(0,0,0,.15),
+    inset 0 1px 2px rgba(255,255,255,.3);
+
+transition: .2s ease;
+
+}
+
+.btn-3d:hover {
+
+transform: translateY(-2px);
+
+color: white;
+
+box-shadow:
+    0 8px 15px rgba(0,0,0,.20);
+
+}
+
+.btn-buscar {
+
+background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+}
+
+.btn-limpiar {
+
+background:
+    linear-gradient(
+        135deg,
+        #64748b,
+        #334155
+    );
+
+}
+
+/* =========================================================
+TABLA
+========================================================= */
+
+.tabla-responsive {
+
+overflow-x: auto;
+
+padding: 4px;
+
+}
+
+.tabla-productos {
+
+width: 100%;
+
+min-width: 1100px;
+
+border-collapse: separate;
+
+border-spacing: 0 9px;
+
+}
+
+/* =========================================================
+CABECERA TABLA
+========================================================= */
+
+.tabla-productos thead th {
+
+padding: 15px 14px;
+
+color: #e2e8f0;
+
+background:
+    linear-gradient(
+        135deg,
+        #172033,
+        #334155
+    );
+
+font-size: 11px;
+
+font-weight: 800;
+
+text-transform: uppercase;
+
+letter-spacing: .6px;
+
+white-space: nowrap;
+
+border: none;
+
+box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.12),
+    0 5px 10px rgba(15,23,42,.15);
+
+}
+
+.tabla-productos thead th:first-child {
+
+border-radius: 13px 0 0 13px;
+
+}
+
+.tabla-productos thead th:last-child {
+
+border-radius: 0 13px 13px 0;
+
+}
+
+/* =========================================================
+FILAS
+========================================================= */
+
+.tabla-productos tbody tr {
+
+transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+
+}
+
+.tabla-productos tbody tr:hover {
+
+transform:
+    translateY(-4px)
+    scale(1.004);
+
+box-shadow:
+    0 8px 18px rgba(15,23,42,.12),
+    0 18px 30px rgba(15,23,42,.08);
+
+}
+
+.tabla-productos tbody td {
+
+padding: 13px 14px;
+
+background: white;
+
+border-top: 1px solid #edf1f6;
+
+border-bottom: 1px solid #edf1f6;
+
+color: #334155;
+
+font-size: 14px;
+
+vertical-align: middle;
+
+}
+
+.tabla-productos tbody td:first-child {
+
+border-left: 1px solid #edf1f6;
+
+border-radius: 13px 0 0 13px;
+
+font-weight: 900;
+
+color: #2563eb;
+
+}
+
+.tabla-productos tbody td:last-child {
+
+border-right: 1px solid #edf1f6;
+
+border-radius: 0 13px 13px 0;
+
+}
+
+/* =========================================================
+ID
+========================================================= */
+
+.producto-id {
+
+color: #2563eb;
+
+font-weight: 900;
+
+}
+
+/* =========================================================
+DESCRIPCIÓN
+========================================================= */
+
+.descripcion {
+
+font-weight: 700;
+
+color: #1e293b;
+
+}
+
+/* =========================================================
+VALORES
+========================================================= */
+
+.valor {
+
+font-weight: 900;
+
+color: #059669;
+
+}
+
+.total {
+
+font-weight: 900;
+
+color: #7c3aed;
+
+font-size: 15px;
+
+}
+
+/* =========================================================
+UNIDAD
+========================================================= */
+
+.unidad {
+
+display: inline-block;
+
+padding: 6px 10px;
+
+border-radius: 9px;
+
+background:
+    linear-gradient(
+        135deg,
+        #f8fafc,
+        #e2e8f0
+    );
+
+color: #475569;
+
+font-size: 12px;
+
+font-weight: 800;
+
+box-shadow:
+    inset 0 1px 1px white,
+    0 3px 6px rgba(0,0,0,.06);
+
+}
+
+/* =========================================================
+STOCK
+========================================================= */
+
+.stock {
+
+display: inline-flex;
+
+align-items: center;
+
+justify-content: center;
+
+min-width: 45px;
+
+padding: 7px 11px;
+
+border-radius: 10px;
+
+color: #0f172a;
+
+font-weight: 900;
+
+background:
+    linear-gradient(
+        135deg,
+        #f8fafc,
+        #e2e8f0
+    );
+
+box-shadow:
+    inset 0 1px 2px white,
+    0 3px 7px rgba(15,23,42,.08);
+
+}
+
+/* =========================================================
+CATEGORIA
+========================================================= */
+
+.categoria {
+
+display: inline-block;
+
+padding: 7px 11px;
+
+border-radius: 20px;
+
+color: #6d28d9;
+
+font-size: 11px;
+
+font-weight: 900;
+
+background:
+    linear-gradient(
+        135deg,
+        #ede9fe,
+        #ddd6fe
+    );
+
+box-shadow:
+    0 4px 8px rgba(124,58,237,.12);
+
+}
+
+/* =========================================================
+IMAGEN
+========================================================= */
+
+.imagen-producto {
+
+width: 65px;
+height: 65px;
+
+object-fit: cover;
+
+border-radius: 13px;
+
+cursor: pointer;
+
+border: 3px solid white;
+
+box-shadow:
+    0 5px 12px rgba(15,23,42,.18);
+
+transition: .25s ease;
+
+}
+
+.imagen-producto:hover {
+
+transform:
+    translateY(-3px)
+    scale(1.06);
+
+box-shadow:
+    0 10px 20px rgba(15,23,42,.25);
+
+}
+
+.sin-imagen {
+
+color: #94a3b8;
+
+font-size: 12px;
+
+font-weight: 700;
+
+}
+
+/* =========================================================
+ACCIONES
+========================================================= */
+
+.acciones {
+
+display: flex;
+
+flex-direction: column;
+
+gap: 7px;
+
+}
+
+.btn-editar,
+.btn-eliminar {
+
+width: 82px;
+
+height: 30px;
+
+border-radius: 8px;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+color: white;
+
+text-decoration: none;
+
+font-size: 11px;
+
+font-weight: 800;
+
+border: none;
+
+cursor: pointer;
+
+box-shadow:
+    0 4px 8px rgba(0,0,0,.16),
+    inset 0 1px 1px rgba(255,255,255,.3);
+
+transition: .2s ease;
+
+}
+
+.btn-editar {
+
+background:
+    linear-gradient(
+        135deg,
+        #22c55e,
+        #15803d
+    );
+
+}
+
+.btn-eliminar {
+
+background:
+    linear-gradient(
+        135deg,
+        #ef4444,
+        #b91c1c
+    );
+
+}
+
+.btn-editar:hover,
+.btn-eliminar:hover {
+
+transform: translateY(-2px);
+
+color: white;
+
+}
+
+/* =========================================================
+TOTAL GENERAL
+========================================================= */
+
+.total-container {
+
+margin-top: 25px;
+
+display: flex;
+
+justify-content: flex-end;
+
+}
+
+.total-card {
+
+min-width: 280px;
+
+padding: 18px 22px;
+
+border-radius: 17px;
+
+background:
+    linear-gradient(
+        135deg,
+        #172033,
+        #334155
+    );
+
+color: white;
+
+box-shadow:
+    0 10px 20px rgba(15,23,42,.22),
+    inset 0 1px 2px rgba(255,255,255,.15);
+
+}
+
+.total-card small {
+
+display: block;
+
+color: #cbd5e1;
+
+font-size: 11px;
+
+text-transform: uppercase;
+
+letter-spacing: .7px;
+
+}
+
+.total-card strong {
+
+display: block;
+
+margin-top: 5px;
+
+font-size: 24px;
+
+color: #4ade80;
+
+}
+
+/* =========================================================
+RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+
+.productos-container {
+
+    padding: 15px;
+}
+
+.productos-toolbar {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+}
+
+.buscador {
+
+    width: 100%;
+
+    flex-wrap: wrap;
+}
+
+.buscador input {
+
+    width: 100%;
+}
+
+.productos-card {
+
+    padding: 12px;
+
+    border-radius: 18px;
+}
+
+}
+
+</style> <div class="productos-container">
+<!-- =====================================================
+     ENCABEZADO
+====================================================== -->
+
+<div class="productos-header">
+
+    <h2>📦 Productos</h2>
+
+    <p>
+        Administración y control del inventario
+    </p>
+
+</div>
+
+<!-- =====================================================
+     MENSAJES
+====================================================== -->
+
 {% with messages = get_flashed_messages() %}
-{% if messages %}
-  <ul class=flashes>
-  {% for message in messages %}
-    <li>{{ message }}</li>
-  {% endfor %}
-  </ul>
-{% endif %}
+
+    {% if messages %}
+
+        <ul class="flashes">
+
+            {% for message in messages %}
+
+                <li>
+                    ✓ {{ message }}
+                </li>
+
+            {% endfor %}
+
+        </ul>
+
+    {% endif %}
+
 {% endwith %}
-<form method="GET" action="{{ url_for('ver_productos') }}" class="mb-3">
-    <div class="input-group">
-        <input
-            type="text"
-            name="buscar"
-            class="form-control"
-            placeholder="Buscar por descripción..."
-            value="{{ request.args.get('buscar', '') }}"
+
+<!-- =====================================================
+     TARJETA PRINCIPAL
+====================================================== -->
+
+<div class="productos-card">
+
+    <!-- =================================================
+         TOOLBAR
+    ================================================== -->
+
+    <div class="productos-toolbar">
+
+        <div class="productos-titulo">
+
+            <div class="productos-icono">
+                📦
+            </div>
+
+            <div>
+
+                <strong>
+                    Lista de productos
+                </strong>
+
+                <small>
+                    Productos registrados en el inventario
+                </small>
+
+            </div>
+
+        </div>
+
+        <!-- BUSCADOR -->
+
+        <form
+            method="GET"
+            action="{{ url_for('ver_productos') }}"
+            class="buscador"
         >
 
-        <button class="btn btn-primary" type="submit" style="width:80px; height:30px; font-size:12px; padding:2px 8px;">
-            Buscar
-        </button>
+            <input
+                type="text"
+                name="buscar"
+                placeholder="🔎 Buscar por descripción..."
+                value="{{ request.args.get('buscar', '') }}"
+            >
 
-        <a href="{{ url_for('ver_productos') }}" class="btn btn-secondary d-flex justify-content-center align-items-center"
-            style="width:80px; height:30px; font-size:12px; padding:2px 8px;">
-            Limpiar
-        </a>
+            <button
+                type="submit"
+                class="btn-3d btn-buscar"
+            >
+                Buscar
+            </button>
+
+            <a
+                href="{{ url_for('ver_productos') }}"
+                class="btn-3d btn-limpiar"
+            >
+                Limpiar
+            </a>
+
+        </form>
+
     </div>
-</form>
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">id</th>
-      <th scope="col">Descripción</th>
-      <th scope="col">Valor Unitario</th>      
-      <th scope="col">Unidad Medida</th>   
-      <th scope="col">Cantidad en Stock</th>      
-      <th scope="col">Categoria</th>
-      <th scope="col">Total$</th>
-      <th scope="col">Acciones</th>
-      <th scope="col">Imagen</th>
 
-      <!-- <th scope="col">Comprar</th> -->
-      
-      
-    </tr>
-  </thead>
-  <tbody>
-      {% for producto, categoria in productos %}
-        <tr>
-          <td>{{ producto.id }}</td>
-          <td>{{ producto.descripcion }}</td>
-          <td>{{ producto.valor_unitario }}</td>
-          <td>{{ producto.unidad_medida }}</td>
-          <td>{{ producto.cantida_stock }}</td>
-          <td>{{ categoria }}</td>
-          <td class="numero">{{ producto.valor_unitario * producto.cantida_stock }}</td>
-          <td> 
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <a href="{{ url_for('eliminar_producto', id=producto.id) }}"
-              class="btn btn-danger d-flex justify-content-center align-items-center"
-              onclick="confirmarEliminar(event, this.href)"
-              style="width:80px; height:30px; font-size:12px; padding:2px 8px;">
-              Eliminar
-            </a>
-            <script>
-              function confirmarEliminar(event, url) {
-                  event.preventDefault();
+    <!-- =================================================
+         TABLA
+    ================================================== -->
 
-                  Swal.fire({
-                    title: '¿Eliminar producto?',
-                    text: 'Esta acción no se puede deshacer.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-              if (result.isConfirmed) {
-              window.location.href = url;
-              }
-              });
-              }
-            </script>
-        
-            <a class="btn btn-success d-flex justify-content-center align-items-center" href="/actualizar_producto/{{producto.id}}" style="width:80px; height:30px; font-size:12px; padding:2px 8px;">
-              Editar
-            </a>
-        </td>
-        <td>
-          {% if producto.imagen %}
-            <img
-              src="{{ url_for('static', filename='uploads/' + producto.imagen) }}"
-              width="60"
-              height="60"
-              style="object-fit: cover; border-radius: 8px; cursor: pointer;"
-              onclick="mostrarImagen(this.src)"
-              title="Haz clic para ver la imagen completa"
-  >
-          {% else %}
-            <span class="text-muted">Sin imagen</span>
-          {% endif %}
-      </td>
-      <script>
-        function mostrarImagen(src) {
-            Swal.fire({
-                imageUrl: src,
-                imageAlt: 'Imagen del producto',
-                showCloseButton: true,
-                showConfirmButton: false,
-                background: '#fff',
-                width: 'auto'
-            });
-        }
-</script>         
-      {% endfor %}
-     
-  </tbody>
-  
-      
-</table>
+    <div class="tabla-responsive">
 
-<hr class="border border-2 my-4" style="border-color: black;">
+        <table class="tabla-productos">
 
-          
-<p><strong>Total precio de productos $: <span id="resultado">0</span></strong></p>
-<button class="btn btn-warning" onclick="sumarTD()" style="width:80px; height:30px; font-size:12px; padding:2px 8px;">Sumar TD</button>
+            <thead>
 
+                <tr>
 
+                    <th>ID</th>
 
+                    <th>Descripción</th>
 
+                    <th>Valor Unitario</th>
 
-<script>
-function sumarTD() {
-  let celdas = document.querySelectorAll(".numero");
-  let total = 0;
+                    <th>Unidad</th>
 
-  celdas.forEach(td => {
-    total += Number(td.textContent);
-  });
+                    <th>Stock</th>
 
-  document.getElementById("resultado").textContent = total;
+                    <th>Categoría</th>
+
+                    <th>Total</th>
+
+                    <th>Acciones</th>
+
+                    <th>Imagen</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for producto, categoria in productos %}
+
+                <tr>
+
+                    <!-- ID -->
+
+                    <td>
+
+                        <span class="producto-id">
+
+                            #{{ producto.id }}
+
+                        </span>
+
+                    </td>
+
+                    <!-- DESCRIPCIÓN -->
+
+                    <td>
+
+                        <span class="descripcion">
+
+                            {{ producto.descripcion }}
+
+                        </span>
+
+                    </td>
+
+                    <!-- VALOR -->
+
+                    <td>
+
+                        <span class="valor">
+
+                            ${{ "%.2f"|format(producto.valor_unitario) }}
+
+                        </span>
+
+                    </td>
+
+                    <!-- UNIDAD -->
+
+                    <td>
+
+                        <span class="unidad">
+
+                            {{ producto.unidad_medida }}
+
+                        </span>
+
+                    </td>
+
+                    <!-- STOCK -->
+
+                    <td>
+
+                        <span class="stock">
+
+                            {{ producto.cantida_stock }}
+
+                        </span>
+
+                    </td>
+
+                    <!-- CATEGORIA -->
+
+                    <td>
+
+                        <span class="categoria">
+
+                            {{ categoria }}
+
+                        </span>
+
+                    </td>
+
+                    <!-- TOTAL -->
+
+                    <td>
+
+                        <span class="total numero">
+
+                            ${{ "%.2f"|format(
+                                producto.valor_unitario *
+                                producto.cantida_stock
+                            ) }}
+
+                        </span>
+
+                    </td>
+
+                    <!-- ACCIONES -->
+
+                    <td>
+
+                        <div class="acciones">
+
+                            <a
+                                href="{{ url_for('eliminar_producto', id=producto.id) }}"
+                                class="btn-eliminar"
+                                onclick="confirmarEliminar(event, this.href)"
+                            >
+                                🗑 Eliminar
+                            </a>
+
+                            <a
+                                href="{{ url_for('actualizar_producto', id=producto.id) }}"
+                                class="btn-editar"
+                            >
+                                ✏ Editar
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                    <!-- IMAGEN -->
+
+                    <td>
+
+                        {% if producto.imagen %}
+
+                            <img
+                                src="{{ url_for(
+                                    'static',
+                                    filename='uploads/' + producto.imagen
+                                ) }}"
+                                class="imagen-producto"
+                                onclick="mostrarImagen(this.src)"
+                                title="Haz clic para ampliar"
+                            >
+
+                        {% else %}
+
+                            <span class="sin-imagen">
+                                Sin imagen
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <!-- =================================================
+         TOTAL GENERAL
+    ================================================== -->
+
+    <div class="total-container">
+
+        <div class="total-card">
+
+            <small>
+                Valor total del inventario
+            </small>
+
+            <strong>
+                $<span id="resultado">0.00</span>
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div> <!-- ========================================================= SWEETALERT ========================================================= --> <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <script>
+/* =========================================================
+CONFIRMAR ELIMINACIÓN
+========================================================= */
+
+function confirmarEliminar(event, url) {
+
+event.preventDefault();
+
+Swal.fire({
+
+    title: '¿Eliminar producto?',
+
+    text: 'Esta acción no se puede deshacer.',
+
+    icon: 'warning',
+
+    showCancelButton: true,
+
+    confirmButtonColor: '#dc2626',
+
+    cancelButtonColor: '#64748b',
+
+    confirmButtonText: 'Sí, eliminar',
+
+    cancelButtonText: 'Cancelar',
+
+    background: '#ffffff',
+
+    borderRadius: '18px'
+
+}).then((result) => {
+
+    if (result.isConfirmed) {
+
+        window.location.href = url;
+
+    }
+
+});
+
 }
-</script>
-      
- 
 
-{% endblock contenido %}    
-     
-     
+/* =========================================================
+MOSTRAR IMAGEN
+========================================================= */
+
+function mostrarImagen(src) {
+
+Swal.fire({
+
+    imageUrl: src,
+
+    imageAlt: 'Imagen del producto',
+
+    showCloseButton: true,
+
+    showConfirmButton: false,
+
+    background: '#ffffff',
+
+    width: 'auto',
+
+    padding: '10px',
+
+    backdrop: 'rgba(15,23,42,.75)'
+
+});
+
+}
+
+/* =========================================================
+SUMAR TOTAL
+========================================================= */
+
+function sumarTD() {
+
+let celdas = document.querySelectorAll(".numero");
+
+let total = 0;
+
+celdas.forEach(td => {
+
+    let valor = td.textContent
+        .replace('$', '')
+        .replace(',', '')
+        .trim();
+
+    total += Number(valor) || 0;
+
+});
+
+document.getElementById("resultado").textContent =
+    total.toLocaleString(
+        'es-CO',
+        {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }
+    );
+
+}
+
+/* =========================================================
+CALCULAR AUTOMÁTICAMENTE
+========================================================= */
+
+document.addEventListener(
+"DOMContentLoaded",
+sumarTD
+);
+
+</script>
+{% endblock contenido %}

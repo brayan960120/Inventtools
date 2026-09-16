@@ -123,6 +123,8 @@ class ProductosController(FlaskController):
             db_session.add(movimiento)
 
             db_session.commit()
+            
+            
 
             return redirect(url_for('ver_productos'))
 

@@ -1,59 +1,242 @@
-
+{% extends 'layout.html' %}
 
 {% block contenido %}
+
+<style> /* ========================================================= CONTENEDOR ========================================================= */ .editar-usuario-container { min-height: 100vh; padding: 35px; background: radial-gradient( circle at 10% 10%, rgba(59,130,246,.13), transparent 30% ), radial-gradient( circle at 90% 90%, rgba(16,185,129,.10), transparent 30% ), linear-gradient( 135deg, #eef2f7, #dce5ef ); } /* ========================================================= ENCABEZADO ========================================================= */ .editar-usuario-header { max-width: 900px; margin: 0 auto 25px; } .editar-usuario-header h2 { margin: 0; color: #172033; font-size: 29px; font-weight: 900; text-shadow: 1px 2px 3px rgba(0,0,0,.12); } .editar-usuario-header p { margin: 7px 0 0; color: #64748b; font-size: 14px; } /* ========================================================= MENSAJES ========================================================= */ .flashes { max-width: 900px; margin: 0 auto 20px; padding: 0; list-style: none; } .flashes li { padding: 14px 18px; margin-bottom: 10px; border-radius: 13px; color: #1e40af; font-weight: 700; background: linear-gradient( 135deg, #dbeafe, #eff6ff ); border-left: 5px solid #2563eb; box-shadow: 0 7px 15px rgba(37,99,235,.12), inset 0 1px 1px white; } /* ========================================================= TARJETA 3D ========================================================= */ .usuario-card { max-width: 900px; margin: 0 auto; padding: 30px; border-radius: 25px; background: rgba(255,255,255,.96); border: 1px solid rgba(255,255,255,.9); box-shadow: 0 10px 20px rgba(15,23,42,.08), 0 25px 50px rgba(15,23,42,.11), 0 40px 80px rgba(15,23,42,.07), inset 0 1px 0 white; transition: .3s ease; } .usuario-card:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(15,23,42,.10), 0 30px 60px rgba(15,23,42,.14); } /* ========================================================= TITULO ========================================================= */ .card-title { display: flex; align-items: center; gap: 15px; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid #e2e8f0; } .card-icon { width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; border-radius: 16px; color: white; font-size: 24px; background: linear-gradient( 135deg, #059669, #047857 ); box-shadow: 0 8px 16px rgba(5,150,105,.30), inset 0 1px 2px rgba(255,255,255,.45); } .card-title h3 { margin: 0; color: #172033; font-size: 21px; font-weight: 900; } .card-title span { display: block; margin-top: 3px; color: #94a3b8; font-size: 12px; } /* ========================================================= GRID ========================================================= */ .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; } /* ========================================================= CAMPOS ========================================================= */ .form-group-custom { display: flex; flex-direction: column; } .form-group-custom label { margin-bottom: 8px; color: #334155; font-size: 13px; font-weight: 800; } /* ========================================================= INPUTS ========================================================= */ .form-control-custom { width: 100%; min-height: 46px; padding: 10px 14px; border: 1px solid #dbe3ed; border-radius: 12px; outline: none; color: #1e293b; background: linear-gradient( 180deg, #ffffff, #f8fafc ); box-shadow: inset 0 2px 4px rgba(15,23,42,.04), 0 3px 7px rgba(15,23,42,.04); transition: .25s ease; } .form-control-custom:focus { border-color: #059669; background: white; box-shadow: 0 0 0 3px rgba(5,150,105,.12), 0 5px 12px rgba(15,23,42,.07); } /* ========================================================= ID ========================================================= */ .form-control-custom[readonly] { color: #64748b; font-weight: 800; background: linear-gradient( 135deg, #f1f5f9, #e2e8f0 ); cursor: not-allowed; } .id-badge { display: inline-block; width: fit-content; margin-top: 8px; padding: 6px 11px; border-radius: 9px; color: #2563eb; font-size: 11px; font-weight: 900; background: linear-gradient( 135deg, #eff6ff, #dbeafe ); box-shadow: inset 0 1px 1px white, 0 3px 7px rgba(37,99,235,.12); } /* ========================================================= CONTRASEÑA ========================================================= */ .password-box { position: relative; } .password-box input { padding-right: 45px; } .password-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 17px; } /* ========================================================= ROL ========================================================= */ .rol-select { appearance: none; cursor: pointer; } /* ========================================================= BOTONES ========================================================= */ .botones { display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px; padding-top: 22px; border-top: 1px solid #e2e8f0; } .btn-3d { min-width: 120px; height: 42px; padding: 0 18px; display: inline-flex; align-items: center; justify-content: center; border: none; border-radius: 11px; color: white; font-size: 12px; font-weight: 800; text-decoration: none; cursor: pointer; box-shadow: 0 6px 12px rgba(0,0,0,.16), inset 0 1px 2px rgba(255,255,255,.35); transition: .2s ease; } .btn-3d:hover { color: white; transform: translateY(-2px); box-shadow: 0 9px 16px rgba(0,0,0,.20), inset 0 1px 2px rgba(255,255,255,.35); } .btn-actualizar { background: linear-gradient( 135deg, #059669, #047857 ); } .btn-cancelar { background: linear-gradient( 135deg, #64748b, #334155 ); } /* ========================================================= RESPONSIVE ========================================================= */ @media (max-width: 700px) { .editar-usuario-container { padding: 15px; } .usuario-card { padding: 20px; border-radius: 20px; } .form-grid { grid-template-columns: 1fr; } .botones { flex-direction: column; } .btn-3d { width: 100%; } } </style> <div class="editar-usuario-container">
+<!-- ENCABEZADO -->
+
+<div class="editar-usuario-header">
+
+    <h2>
+        ✏️ Editar usuario
+    </h2>
+
+    <p>
+        Modifica la información del usuario seleccionado
+    </p>
+
+</div>
+
+
+<!-- MENSAJES -->
+
 {% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
+
+    {% if messages %}
+
+        <ul class="flashes">
+
+            {% for message in messages %}
+
+                <li>
+                    ✓ {{ message }}
+                </li>
+
+            {% endfor %}
+
+        </ul>
+
+    {% endif %}
+
 {% endwith %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-      {% block titulo %}
-        {{ titulo_pagina }}
-      {% endblock %}
-    </title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-</head>
-  <div class="container-fluid">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success" >
-        <a class="navbar-brand" href="/">Inventtools</a>
-    </nav>
-  </div>
-<form action="crear_usuario" method="post">
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <label for="id">Id producto</label>
-            <input value= {{usuario.id}} type="text" class="form-control" id="id" name="id"  readonly >
+
+
+<!-- TARJETA -->
+
+<div class="usuario-card">
+
+
+    <div class="card-title">
+
+        <div class="card-icon">
+            👤
         </div>
-        <div class="form-group col-md-6">
-            <label for="nombre_completo">Nombre completo</label>
-            <input value= {{usuario.nombre_completo}} type="text" class="form-control" id="nombre_completo" name="nombre_completo" placeholder="Nombre completo">
+
+        <div>
+
+            <h3>
+                Información del usuario
+            </h3>
+
+            <span>
+                Actualiza los datos y guarda los cambios
+            </span>
+
         </div>
-        <div class="form-group col-md-6">
-            <label for="email">Email</label>
-            <input value= {{usuario.email}} type="text" class="form-control" id="email" name="email" placeholder="Email">
+
+    </div>
+
+
+    <!-- FORMULARIO -->
+
+    <form
+        action="/actualizar_usuario/{{ usuario.id }}"
+        method="POST"
+    >
+
+
+        <div class="form-grid">
+
+
+            <!-- ID -->
+
+            <div class="form-group-custom">
+
+                <label for="id">
+                    🆔 ID Usuario
+                </label>
+
+                <input
+                    value="{{ usuario.id }}"
+                    type="text"
+                    class="form-control-custom"
+                    id="id"
+                    name="id"
+                    readonly
+                >
+
+                <span class="id-badge">
+                    Usuario #{{ usuario.id }}
+                </span>
+
+            </div>
+
+
+            <!-- NOMBRE -->
+
+            <div class="form-group-custom">
+
+                <label for="nombre_completo">
+                    👤 Nombre completo
+                </label>
+
+                <input
+                    value="{{ usuario.nombre_completo }}"
+                    type="text"
+                    class="form-control-custom"
+                    id="nombre_completo"
+                    name="nombre_completo"
+                    placeholder="Nombre completo"
+                    required
+                >
+
+            </div>
+
+
+            <!-- EMAIL -->
+
+            <div class="form-group-custom">
+
+                <label for="email">
+                    ✉️ Correo electrónico
+                </label>
+
+                <input
+                    value="{{ usuario.email }}"
+                    type="email"
+                    class="form-control-custom"
+                    id="email"
+                    name="email"
+                    placeholder="correo@ejemplo.com"
+                    required
+                >
+
+            </div>
+
+
+            <!-- CONTRASEÑA -->
+
+            <div class="form-group-custom">
+
+                <label for="contraseña">
+                    🔒 Contraseña
+                </label>
+
+                <div class="password-box">
+
+                    <input
+                        value="{{ usuario.contraseña }}"
+                        type="password"
+                        class="form-control-custom"
+                        id="contraseña"
+                        name="contraseña"
+                        readonly
+                    >
+
+                    <span class="password-icon">
+                        🔒
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ROL -->
+
+            <div class="form-group-custom">
+
+                <label for="rol">
+                    🛡️ Rol
+                </label>
+
+                <select
+                    id="rol"
+                    name="rol"
+                    class="form-control-custom rol-select"
+                    required
+                >
+
+                    <option
+                        value="Administrador"
+                        {% if usuario.rol == 'Administrador' %}
+                            selected
+                        {% endif %}
+                    >
+                        Administrador
+                    </option>
+
+                    <option
+                        value="Usuario"
+                        {% if usuario.rol == 'Usuario' %}
+                            selected
+                        {% endif %}
+                    >
+                        Usuario
+                    </option>
+
+                </select>
+
+            </div>
+
+
         </div>
-        <div class="form-group col-md-6">
-            <label for="contraseña">Contraseña</label>
-            <input value= {{usuario.contraseña}} type="password" class="form-control" id="contraseña" name="contraseña" readonly">
+
+
+        <!-- BOTONES -->
+
+        <div class="botones">
+
+            <a
+                href="{{ url_for('ver_usuarios') }}"
+                class="btn-3d btn-cancelar"
+            >
+                ← Cancelar
+            </a>
+
+            <button
+                type="submit"
+                class="btn-3d btn-actualizar"
+            >
+                💾 Actualizar
+            </button>
+
         </div>
-        <div class="form-group col-md-6">
-            <label for="rol">Rol</label>
-            <input value= {{usuario.rol}} type="text" class="form-control" id="rol" name="rol" placeholder="Rol">
-        </div>
-        
-    <button type="submit" class="btn btn-success btn-sm" style="width:80px; height:30px; font-size:12px; padding:2px 8px;">Actualizar</button>
-</form>
+
+
+    </form>
+
+</div>
+
+</div>
 {% endblock contenido %}

@@ -1,58 +1,176 @@
-
+{% extends 'layout.html' %}
 
 {% block contenido %}
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-      {% block titulo %}
-        {{ titulo_pagina }}
-      {% endblock %}
-    </title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-</head>
-  <div class="container-fluid">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success" >
-        <a class="navbar-brand" href="/">Inventtools</a>
-        <a href="/crear_categoria" class="btn btn-secondary d-flex justify-content-center align-items-center"
-            style="width:100px; height:30px; font-size:12px;">Crear categoría</a>
-    </nav>
-  </div>
-<form action="actualizar_categoria" method="post">
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <label for="id">Id categoria</label>
-            <input value= {{categoria.id}} type="text" class="form-control" id="id" name="id"  readonly >
-        </div>
-        
-        
-        <div class="form-group col-md-6">
-            <label for="categoria">Categoria</label>
-            <select id="categoria" name="categoria" class="form-control">
-              <option selected value="">Seleccione...</option>
-              {% for categoria in categorias %}
-                <option {% if categorias.id == producto.categoria %} selected {% endif %}  value="{{categoria.categoria}}">{{categoria.categoria}}</option>
-              {% endfor %}
-            </select>
-          </div>
-        
-        <button type="submit" class="btn btn-success" style="width:80px; height:30px; font-size:12px; padding:2px 8px;">Actualizar</button>
-    </div>
-   
 
-    {% endblock contenido %}
+<style> /* ========================================================= CONTENEDOR ========================================================= */ .editar-categoria-container { min-height: 100vh; padding: 35px; background: radial-gradient( circle at 10% 10%, rgba(124,58,237,.14), transparent 30% ), radial-gradient( circle at 90% 90%, rgba(59,130,246,.10), transparent 30% ), linear-gradient( 135deg, #eef2f7, #dce5ef ); } /* ========================================================= ENCABEZADO ========================================================= */ .editar-categoria-header { max-width: 800px; margin: 0 auto 25px; } .editar-categoria-header h2 { margin: 0; color: #172033; font-size: 29px; font-weight: 900; text-shadow: 1px 2px 3px rgba(0,0,0,.12); } .editar-categoria-header p { margin: 7px 0 0; color: #64748b; font-size: 14px; } /* ========================================================= MENSAJES ========================================================= */ .flashes { max-width: 800px; margin: 0 auto 20px; padding: 0; list-style: none; } .flashes li { padding: 14px 18px; margin-bottom: 10px; border-radius: 13px; color: #1e40af; font-weight: 700; background: linear-gradient( 135deg, #dbeafe, #eff6ff ); border-left: 5px solid #2563eb; box-shadow: 0 7px 15px rgba(37,99,235,.12), inset 0 1px 1px white; } /* ========================================================= TARJETA 3D ========================================================= */ .categoria-card { max-width: 800px; margin: 0 auto; padding: 30px; border-radius: 25px; background: rgba(255,255,255,.96); border: 1px solid rgba(255,255,255,.9); box-shadow: 0 10px 20px rgba(15,23,42,.08), 0 25px 50px rgba(15,23,42,.11), 0 40px 80px rgba(15,23,42,.07), inset 0 1px 0 white; transition: .3s ease; } .categoria-card:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(15,23,42,.10), 0 30px 60px rgba(15,23,42,.14); } /* ========================================================= TITULO TARJETA ========================================================= */ .card-title { display: flex; align-items: center; gap: 15px; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid #e2e8f0; } .card-icon { width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; border-radius: 16px; color: white; font-size: 24px; background: linear-gradient( 135deg, #7c3aed, #4f46e5 ); box-shadow: 0 8px 16px rgba(124,58,237,.30), inset 0 1px 2px rgba(255,255,255,.45); } .card-title h3 { margin: 0; color: #172033; font-size: 21px; font-weight: 900; } .card-title span { display: block; margin-top: 3px; color: #94a3b8; font-size: 12px; } /* ========================================================= FORMULARIO ========================================================= */ .form-group-custom { margin-bottom: 22px; } .form-group-custom label { display: block; margin-bottom: 8px; color: #334155; font-size: 13px; font-weight: 800; } /* ========================================================= INPUT ========================================================= */ .form-control-custom { width: 100%; min-height: 46px; padding: 10px 14px; border: 1px solid #dbe3ed; border-radius: 12px; outline: none; color: #1e293b; background: linear-gradient( 180deg, #ffffff, #f8fafc ); box-shadow: inset 0 2px 4px rgba(15,23,42,.04), 0 3px 7px rgba(15,23,42,.04); transition: .25s ease; } .form-control-custom:focus { border-color: #7c3aed; background: white; box-shadow: 0 0 0 3px rgba(124,58,237,.12), 0 5px 12px rgba(15,23,42,.07); } .form-control-custom[readonly] { color: #64748b; font-weight: 800; background: linear-gradient( 135deg, #f1f5f9, #e2e8f0 ); cursor: not-allowed; } /* ========================================================= ID ========================================================= */ .id-badge { display: inline-block; margin-top: 8px; padding: 7px 12px; border-radius: 9px; color: #2563eb; font-size: 11px; font-weight: 900; background: linear-gradient( 135deg, #eff6ff, #dbeafe ); box-shadow: inset 0 1px 1px white, 0 3px 7px rgba(37,99,235,.12); } /* ========================================================= BOTONES ========================================================= */ .botones { display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px; padding-top: 22px; border-top: 1px solid #e2e8f0; } .btn-3d { min-width: 110px; height: 42px; padding: 0 18px; display: inline-flex; align-items: center; justify-content: center; border: none; border-radius: 11px; color: white; font-size: 12px; font-weight: 800; text-decoration: none; cursor: pointer; box-shadow: 0 6px 12px rgba(0,0,0,.16), inset 0 1px 2px rgba(255,255,255,.35); transition: .2s ease; } .btn-3d:hover { color: white; transform: translateY(-2px); box-shadow: 0 9px 16px rgba(0,0,0,.20), inset 0 1px 2px rgba(255,255,255,.35); } .btn-actualizar { background: linear-gradient( 135deg, #7c3aed, #4f46e5 ); } .btn-cancelar { background: linear-gradient( 135deg, #64748b, #334155 ); } /* ========================================================= BOTON CREAR CATEGORIA ========================================================= */ .btn-crear { display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; padding: 10px 16px; border-radius: 11px; color: white; text-decoration: none; font-size: 12px; font-weight: 800; background: linear-gradient( 135deg, #2563eb, #1d4ed8 ); box-shadow: 0 5px 10px rgba(37,99,235,.20), inset 0 1px 2px rgba(255,255,255,.35); transition: .2s ease; } .btn-crear:hover { color: white; transform: translateY(-2px); } /* ========================================================= RESPONSIVE ========================================================= */ @media (max-width: 650px) { .editar-categoria-container { padding: 15px; } .categoria-card { padding: 20px; border-radius: 20px; } .botones { flex-direction: column; } .btn-3d { width: 100%; } } </style> <div class="editar-categoria-container">
+<!-- =====================================================
+     ENCABEZADO
+====================================================== -->
+
+<div class="editar-categoria-header">
+
+    <h2>
+        ✏️ Editar categoría
+    </h2>
+
+    <p>
+        Modifica el nombre de la categoría seleccionada
+    </p>
+
+</div>
+
+
+<!-- =====================================================
+     MENSAJES
+====================================================== -->
+
+{% with messages = get_flashed_messages() %}
+
+    {% if messages %}
+
+        <ul class="flashes">
+
+            {% for message in messages %}
+
+                <li>
+                    ✓ {{ message }}
+                </li>
+
+            {% endfor %}
+
+        </ul>
+
+    {% endif %}
+
+{% endwith %}
+
+
+<!-- =====================================================
+     TARJETA
+====================================================== -->
+
+<div class="categoria-card">
+
+
+    <div class="card-title">
+
+        <div class="card-icon">
+            🏷️
+        </div>
+
+        <div>
+
+            <h3>
+                Información de categoría
+            </h3>
+
+            <span>
+                Actualiza los datos y guarda los cambios
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         FORMULARIO
+    ================================================== -->
+
+    <form
+        action="/actualizar_categoria/{{ categoria.id }}"
+        method="POST"
+    >
+
+
+        <!-- ID -->
+
+        <div class="form-group-custom">
+
+            <label for="id">
+                🆔 ID Categoría
+            </label>
+
+            <input
+                value="{{ categoria.id }}"
+                type="text"
+                class="form-control-custom"
+                id="id"
+                name="id"
+                readonly
+            >
+
+            <span class="id-badge">
+                ID #{{ categoria.id }}
+            </span>
+
+        </div>
+
+
+        <!-- CATEGORIA -->
+
+        <div class="form-group-custom">
+
+            <label for="categoria">
+                🏷️ Nombre de categoría
+            </label>
+
+            <select
+                id="categoria"
+                name="categoria"
+                class="form-control-custom"
+                required
+            >
+
+                {% for cat in categorias %}
+
+                    <option
+                        value="{{ cat.categoria }}"
+                        {% if cat.id == categoria.id %}
+                            selected
+                        {% endif %}
+                    >
+
+                        {{ cat.categoria }}
+
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- =================================================
+             BOTONES
+        ================================================== -->
+
+        <div class="botones">
+
+
+            <a
+                href="{{ url_for('ver_categorias') }}"
+                class="btn-3d btn-cancelar"
+            >
+                ← Cancelar
+            </a>
+
+
+            <button
+                type="submit"
+                class="btn-3d btn-actualizar"
+            >
+                💾 Actualizar
+            </button>
+
+
+        </div>
+
+
+    </form>
+
+</div>
+
+</div>
+{% endblock contenido %}
