@@ -10,6 +10,9 @@ from src.models import session, Base
 from sqlalchemy import update
 from src.models.categorias import Categorias
 from src.models import session as db_session
+from sqlalchemy import or_
+from sqlalchemy.orm import relationship
+
 
 
 
@@ -23,6 +26,10 @@ class Productos(Base,SerializerMixin):
     categoria = Column(Integer, ForeignKey('categorias.id'), nullable=False)
     activo = Column(Boolean, default=True)
     imagen = Column(String, nullable=True)
+    movimientos = relationship(
+        "Movimientos",
+        back_populates="producto"
+    )
 
     
     
@@ -36,18 +43,27 @@ class Productos(Base,SerializerMixin):
         self.activo = activo
         self.imagen = imagen
 
-    def obtener_productos():
-        productos = session.query(
+    def obtener_productos(buscar=''):
+
+        consulta = session.query(
             Productos,
             Categorias
         ).join(
             Categorias,
             Productos.categoria == Categorias.id
-        ).filter(
-            Productos.activo.is_(True)
-        ).all()
+        )
 
-        return productos
+        if buscar:
+
+            consulta = consulta.filter(
+                or_(
+                    Productos.descripcion.ilike(f'%{buscar}%'),
+                    Categorias.categoria.ilike(f'%{buscar}%')
+                )
+            )
+
+        return consulta.all()
+
 
 
     

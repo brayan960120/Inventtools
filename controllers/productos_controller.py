@@ -18,6 +18,7 @@ from src.models import session as db_session
 import os
 from werkzeug.utils import secure_filename
 from flask_login import login_required, current_user
+from sqlalchemy import or_
 
 
 class ProductosController(FlaskController):
@@ -141,31 +142,19 @@ class ProductosController(FlaskController):
         )
 
 
-    
+
     @app.route('/ver_productos')
     def ver_productos():
 
-        buscar = request.args.get("buscar", "")
+        buscar = request.args.get('buscar', '').strip()
 
-        consulta = (
-            db_session.query(Productos, Categorias.categoria)
-            .join(Categorias)
-            .filter(Productos.activo == True)
-        )
+        productos = Productos.obtener_productos(buscar)
 
-        if buscar:
-            consulta = consulta.filter(
-                Productos.descripcion.ilike(f"%{buscar}%")
-            )
-
-        productos = consulta.all()
- 
         return render_template(
             'tabla_productos.html',
-            titulo_pagina='Ver Productos',
             productos=productos
         )
-    
+
 
     @app.route("/eliminar_producto/<int:id>", methods=["POST"])
     @login_required
@@ -206,113 +195,227 @@ class ProductosController(FlaskController):
         return redirect(url_for("ver_productos"))
 
 
-    @app.route('/actualizar_producto/<id>', methods=['GET', 'POST'])
+    @app.route('/actualizar_producto/<int:id>', methods=['GET', 'POST'])
     @login_required
     def actualizar_producto(id):
 
         if 'email' not in session:
-            return render_template(
-                'formulario_login.html',
-                titulo_pagina='Login'
-            )
+            return redirect(url_for('login'))
 
-        # Buscar usuario que está realizando la actualización
-        usuario = db_session.query(Usuarios).filter_by(
-            email=session["email"]
+        usuario = db_session.query(
+            Usuarios
+        ).filter_by(
+            email=session['email']
         ).first()
+
+        if usuario is None:
+            flash("No se encontró el usuario.", "danger")
+            return redirect(url_for('login'))
+
+        producto = db_session.get(Productos, id)
+
+        if producto is None:
+            flash("El producto no existe.", "danger")
+            return redirect(url_for('ver_productos'))
+
+    # ============================
+    # GET
+    # ============================
 
         if request.method == 'GET':
 
-            producto = Productos.obtener_producto_por_id(id)
-            categoria = Categorias.obtener_categorias()
+            categorias = Categorias.obtener_categorias()
 
             return render_template(
                 'formulario_actualizar_producto.html',
-                titulo_pagina='Actualizar Productos',
+                titulo_pagina='Actualizar Producto',
                 producto=producto,
-                categoria=categoria,
+                categoria=categorias,
                 tipo_de_movimiento='actualizar'
             )
 
-        if request.method == 'POST':
+    # ============================
+    # POST
+    # ============================
 
-    # -----------------------------------------
-    # BUSCAR PRODUCTO ACTUAL
-    # -----------------------------------------
+        descripcion = request.form.get(
+            'descripcion',
+            ''
+        ).strip()
 
-            producto_actual = db_session.get(Productos, id)
+        valor_unitario = request.form.get(
+            'valor_unitario',
+            ''
+        ).strip()
 
-            if producto_actual is None:
-                flash("El producto no existe.")
-                return redirect(url_for("ver_productos"))
+        unidad_medida = request.form.get(
+            'unidad_medida',
+            ''
+        ).strip()
 
-            # Guardamos los valores anteriores
-            stock_anterior = producto_actual.cantida_stock
-            precio_anterior = producto_actual.valor_unitario
-            descripcion_anterior = producto_actual.descripcion
-            unidad_anterior = producto_actual.unidad_medida
-            categoria_anterior = producto_actual.categoria
+        cantida_stock = request.form.get(
+            'cantida_stock',
+            ''
+        ).strip()
 
-        # -----------------------------------------
-        # DATOS NUEVOS DEL FORMULARIO
-        # -----------------------------------------
+        categoria = request.form.get(
+            'categoria',
+            ''
+        ).strip()
 
-            descripcion = request.form.get('descripcion')
-            valor_unitario = request.form.get('valor_unitario')
-            unidad_medida = request.form.get('unidad_medida')
-            cantida_stock = request.form.get('cantida_stock')
-            categoria = request.form.get('categoria')
+    # ============================
+    # VALIDACIONES
+    # ============================
 
-        # Convertir números
+        if not descripcion:
+            flash("La descripción es obligatoria.", "danger")
+            return redirect(
+                url_for('actualizar_producto', id=id)
+            )
+
+        if not valor_unitario:
+            flash("El valor unitario es obligatorio.", "danger")
+            return redirect(
+                url_for('actualizar_producto', id=id)
+            )
+
+        if not unidad_medida:
+            flash("La unidad de medida es obligatoria.", "danger")
+            return redirect(
+                url_for('actualizar_producto', id=id)
+            )
+
+        if not cantida_stock:
+            flash("La cantidad en stock es obligatoria.", "danger")
+            return redirect(
+                url_for('actualizar_producto', id=id)
+            )
+
+        if not categoria:
+            flash("La categoría es obligatoria.", "danger")
+            return redirect(
+                url_for('actualizar_producto', id=id)
+            )
+
+    # ============================
+    # CONVERTIR VALORES
+    # ============================
+
+        try:
+
             stock_nuevo = int(cantida_stock)
-            precio_nuevo = float(valor_unitario)
 
-        # Imagen
-            imagen = request.files.get('imagen')
-
-        # -----------------------------------------
-        # ACTUALIZAR PRODUCTO
-        # -----------------------------------------
-
-            producto_modificar = Productos(
-                descripcion,
-                precio_nuevo,
-                unidad_medida,
-                stock_nuevo,
-                categoria,
-                True
+            precio_nuevo = float(
+                valor_unitario.replace(',', '.')
             )
 
-            Productos.actualizar_producto(
-                producto_modificar,
-                id,
-                imagen
+            categoria_nueva = int(categoria)
+
+        except ValueError:
+
+            flash(
+                "Los valores ingresados no son válidos.",
+                "danger"
             )
 
-        # -----------------------------------------
-        # DETERMINAR TIPO DE MOVIMIENTO
-        # -----------------------------------------
+            return redirect(
+                url_for('actualizar_producto', id=id)
+            )
 
-            if stock_nuevo > stock_anterior:
+        if stock_nuevo < 0:
+
+            flash(
+                "El stock no puede ser negativo.",
+                "danger"
+            )
+
+            return redirect(
+                url_for('actualizar_producto', id=id)
+            )
+
+    # ============================
+    # STOCK ANTERIOR
+    # ============================
+
+        stock_anterior = producto.cantida_stock
+
+    # Diferencia:
+    # + = entrada
+    # - = salida
+
+        diferencia_stock = (
+            stock_nuevo - stock_anterior
+        )
+
+    # ============================
+    # IMAGEN
+    # ============================
+
+        imagen = request.files.get('imagen')
+
+    # ============================
+    # ACTUALIZAR PRODUCTO
+    # ============================
+
+        producto.descripcion = descripcion
+        producto.valor_unitario = precio_nuevo
+        producto.unidad_medida = unidad_medida
+        producto.cantida_stock = stock_nuevo
+        producto.categoria = categoria_nueva
+
+    # ============================
+    # ACTIVO / INACTIVO
+    # ============================
+
+        producto.activo = stock_nuevo > 0
+
+    # ============================
+    # IMAGEN
+    # ============================
+
+        if imagen and imagen.filename:
+
+            os.makedirs(
+                'static/uploads',
+                exist_ok=True
+            )
+
+            nombre_archivo = secure_filename(
+                imagen.filename
+            )
+
+            ruta = os.path.join(
+                'static',
+                'uploads',
+                nombre_archivo
+            )
+
+            imagen.save(ruta)
+
+            producto.imagen = nombre_archivo
+
+    # ============================
+    # REGISTRAR MOVIMIENTO
+    # ============================
+
+        if diferencia_stock != 0:
+
+            if diferencia_stock > 0:
 
                 tipo_movimiento = "Entrada"
-
-            elif stock_nuevo < stock_anterior:
-
-                tipo_movimiento = "Salida"
+                cantidad_movimiento = diferencia_stock
 
             else:
 
-                tipo_movimiento = "Actualización"
-
-        # -----------------------------------------
-        # CREAR MOVIMIENTO
-        # -----------------------------------------
+                tipo_movimiento = "Salida"
+                cantidad_movimiento = abs(
+                    diferencia_stock
+                )
 
             movimiento = Movimientos(
                 usuario_id=usuario.id,
-                producto_id=id,
-                cantida_stock=stock_nuevo,
+                producto_id=producto.id,
+                cantida_stock=cantidad_movimiento,
                 valor_unitario=precio_nuevo,
                 tipo_de_movimiento=tipo_movimiento,
                 fecha=datetime.datetime.now(),
@@ -320,13 +423,169 @@ class ProductosController(FlaskController):
             )
 
             db_session.add(movimiento)
+
+    # ============================
+    # GUARDAR
+    # ============================
+
+        try:
+
+            db_session.commit()
+
+            if diferencia_stock > 0:
+
+                flash(
+                    f"Producto actualizado. "
+                    f"Se registró una entrada de "
+                    f"{diferencia_stock} unidades.",
+                    "success"
+                )
+
+            elif diferencia_stock < 0:
+
+                flash(
+                    f"Producto actualizado. "
+                    f"Se registró una salida de "
+                    f"{abs(diferencia_stock)} unidades.",
+                    "success"
+                )
+
+            else:
+
+                flash(
+                    "Producto actualizado correctamente.",
+                    "success"
+                )
+
+        except Exception as e:
+
+            db_session.rollback()
+
+            print(
+                "ERROR ACTUALIZANDO PRODUCTO:",
+                e
+            )
+
+            flash(
+                "No fue posible actualizar el producto.",
+                "danger"
+            )
+
+        return redirect(
+            url_for('ver_productos')
+        )
+    
+
+
+    @app.route('/cambiar_estado_producto/<int:id>', methods=['POST'])
+    @login_required
+    def cambiar_estado_producto(id):
+
+    # =========================================================
+    # BUSCAR PRODUCTO
+    # =========================================================
+
+        producto = db_session.get(Productos, id)
+
+        if producto is None:
+            flash('Producto no encontrado.', 'danger')
+            return redirect(url_for('ver_productos'))
+
+
+    # =========================================================
+    # ESTADO ENVIADO POR EL SWITCH
+    # =========================================================
+
+        nuevo_estado = request.form.get('activo') == '1'
+
+
+    # =========================================================
+    # DESACTIVAR
+    # =========================================================
+
+        if not nuevo_estado:
+
+        # Guardamos el stock ANTES de ponerlo en cero
+            stock_anterior = producto.cantida_stock or 0
+
+
+        # Registrar salida
+            if stock_anterior > 0:
+
+                movimiento = Movimientos(
+                    usuario_id=current_user.id,
+                    producto_id=producto.id,
+                    cantida_stock=stock_anterior,
+                    valor_unitario=producto.valor_unitario,
+                    tipo_de_movimiento='Salida',
+                    fecha=datetime.datetime.now(),
+                    activo=True
+                )
+
+                db_session.add(movimiento)
+
+
+        # Cambiar producto
+            producto.cantida_stock = 0
+            producto.activo = False
+
+
+            mensaje = (
+                f'Producto "{producto.descripcion}" desactivado. '
+                f'Se registró una salida de {stock_anterior} unidades.'
+            )
+
+
+    # =========================================================
+    # ACTIVAR
+    # =========================================================
+
+        else:
+
+            producto.activo = True
+
+            mensaje = (
+                f'Producto "{producto.descripcion}" activado correctamente.'
+            )
+
+
+    # =========================================================
+    # GUARDAR
+    # =========================================================
+
+        try:
+
             db_session.commit()
 
             flash(
-                f"Producto '{descripcion}' actualizado correctamente."
+                mensaje,
+                'success'
             )
 
-            return redirect(url_for("ver_productos"))
+        except Exception as e:
+
+            db_session.rollback()
+
+            print(
+                "ERROR CAMBIANDO ESTADO DEL PRODUCTO:",
+                e
+            )
+
+            flash(
+                'No fue posible cambiar el estado del producto.',
+                'danger'
+            )
+
+
+        return redirect(
+            url_for('ver_productos')
+        )
+
+
+
+
+
+
 
 
         

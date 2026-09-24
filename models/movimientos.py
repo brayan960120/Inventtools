@@ -63,9 +63,15 @@ class Movimientos(Base):
     )
 
     usuario = relationship(
-        "Usuarios",
+    "Usuarios",
+    back_populates="movimientos"
+    )
+
+    producto = relationship(
+        "Productos",
         back_populates="movimientos"
     )
+
 
 def registrar_movimiento_actualizacion(producto):
     movimiento = Movimientos(
@@ -74,8 +80,9 @@ def registrar_movimiento_actualizacion(producto):
         cantida_stock=producto.cantida_stock,
         valor_unitario=producto.valor_unitario,
         tipo_de_movimiento="Actualización",
-        fecha=datetime.datetime.now(),
+        fecha=datetime.now(),
         activo=True
     )
 
     session.add(movimiento)
+    session.commit()

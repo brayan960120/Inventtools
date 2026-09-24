@@ -1,134 +1,1099 @@
-{% extends 'layout.html' %}
+<div class="movimientos-wrapper">
 
-{% block contenido %}
+    <!-- CABECERA -->
+    <div class="movimientos-header">
+        <div>
+            <span class="movimientos-badge">INVENTARIO</span>
+            <h2>Movimientos de inventario</h2>
+            <p>Control de entradas y salidas de productos</p>
+        </div>
 
-<style> /* ===== CONTENEDOR PRINCIPAL ===== */ .movimientos-container { padding: 30px; min-height: 100vh; background: linear-gradient(135deg, #eef2f7, #dce4ee); } /* ===== ENCABEZADO ===== */ .movimientos-header { margin-bottom: 25px; } .movimientos-header h2 { font-weight: 800; color: #1e293b; margin-bottom: 5px; text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.12); } .movimientos-header p { color: #64748b; margin: 0; } /* ===== TARJETA 3D ===== */ .tabla-card { background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 20px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.10), 0 20px 40px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8); border: 1px solid rgba(255, 255, 255, 0.8); overflow: hidden; transform: translateY(0); transition: all 0.3s ease; } .tabla-card:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12), 0 25px 50px rgba(0, 0, 0, 0.10); } /* ===== TABLA ===== */ .tabla-movimientos { width: 100%; border-collapse: separate; border-spacing: 0 8px; } .tabla-movimientos thead th { background: linear-gradient(135deg, #1e293b, #334155); color: white; padding: 16px 14px; border: none; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; } .tabla-movimientos thead th:first-child { border-radius: 12px 0 0 12px; } .tabla-movimientos thead th:last-child { border-radius: 0 12px 12px 0; } /* ===== FILAS ===== */ .tabla-movimientos tbody tr { background: #ffffff; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06); transition: all 0.25s ease; } .tabla-movimientos tbody tr:hover { transform: scale(1.008) translateY(-2px); box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12); background: #f8fafc; } .tabla-movimientos tbody td { padding: 15px 14px; border-top: 1px solid #eef2f7; border-bottom: 1px solid #eef2f7; color: #334155; vertical-align: middle; font-size: 14px; } .tabla-movimientos tbody td:first-child { border-left: 1px solid #eef2f7; border-radius: 12px 0 0 12px; font-weight: 800; color: #2563eb; } .tabla-movimientos tbody td:last-child { border-right: 1px solid #eef2f7; border-radius: 0 12px 12px 0; } /* ===== USUARIO ===== */ .usuario { display: flex; align-items: center; gap: 10px; font-weight: 600; color: #1e293b; } .usuario-icono { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; background: linear-gradient(135deg, #6366f1, #8b5cf6); box-shadow: 0 5px 10px rgba(99, 102, 241, 0.35), inset 0 1px 2px rgba(255,255,255,0.4); } /* ===== PRODUCTO ===== */ .producto-id { display: inline-block; padding: 7px 12px; border-radius: 9px; background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #2563eb; font-weight: 700; box-shadow: 0 3px 6px rgba(37, 99, 235, 0.15); } /* ===== CANTIDAD ===== */ .cantidad { font-weight: 800; font-size: 16px; color: #0f172a; } /* ===== VALOR ===== */ .valor { font-weight: 800; color: #059669; font-size: 15px; } /* ===== BADGES 3D ===== */ .badge-3d { display: inline-block; padding: 8px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; color: white; box-shadow: 0 5px 10px rgba(0, 0, 0, 0.18), inset 0 1px 2px rgba(255,255,255,0.35); text-shadow: 0 1px 2px rgba(0,0,0,0.2); } .entrada { background: linear-gradient(135deg, #22c55e, #15803d); } .salida { background: linear-gradient(135deg, #ef4444, #b91c1c); } .activo { background: linear-gradient(135deg, #3b82f6, #1d4ed8); } .eliminado { background: linear-gradient(135deg, #64748b, #334155); } /* ===== FECHA ===== */ .fecha { color: #64748b; font-weight: 600; white-space: nowrap; } /* ===== ALERTAS ===== */ .flashes { list-style: none; padding: 0; margin: 0 0 20px 0; } .flashes li { background: linear-gradient(135deg, #dbeafe, #eff6ff); color: #1e40af; padding: 15px 20px; border-radius: 12px; margin-bottom: 10px; font-weight: 600; box-shadow: 0 5px 15px rgba(37, 99, 235, 0.12); border-left: 5px solid #2563eb; } /* ===== RESPONSIVE ===== */ .tabla-responsive { overflow-x: auto; padding: 3px; } @media (max-width: 900px) { .movimientos-container { padding: 15px; } .tabla-card { padding: 10px; } .tabla-movimientos { min-width: 950px; } .actualizacion {background: linear-gradient(135deg, #f59e0b, #d97706); } }  </style> <div class="movimientos-container">
-<div class="movimientos-header">
-    <h2>📦 Movimientos de Inventario</h2>
-    <p>Consulta las entradas y salidas de productos</p>
-</div>
+        <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+        <a class="navbar-brand" href="/">
+
+            <i class="fas fa-toolbox"></i>
+
+                Inventtools
+
+        </a>
+    </div>
 
 
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <ul class="flashes">
-            {% for message in messages %}
-                <li>✓ {{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endwith %}
+    <!-- TARJETA 3D -->
+    <div class="tabla-card-3d">
+
+        <div class="tabla-card-top">
+            <div>
+                <h4>
+                    <i class="bi bi-box-seam"></i>
+                    Registro de movimientos
+                </h4>
+
+                <span class="contador-movimientos">
+                    {{ movimientos|length }} movimiento(s)
+                </span>
+            </div>
+        </div>
 
 
-<div class="tabla-card">
+        <!-- TABLA -->
+        <div class="tabla-scroll">
 
-    <div class="tabla-responsive">
+            <table class="tabla-movimientos">
 
-        <table class="tabla-movimientos">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Producto</th>
+                        <th>Usuario</th>
+                        <th>Cantidad</th>
+                        <th>Valor unitario</th>
+                        <th>Tipo</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
 
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Usuario</th>
-                    <th>ID Producto</th>
-                    <th>Cantidad</th>
-                    <th>Valor Unitario</th>
-                    <th>Tipo de Movimiento</th>
-                    <th>Fecha</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
+                <tbody>
 
-            <tbody>
+                    {% for movimiento in movimientos %}
 
-                {% for movimiento in movimientos %}
+                    <tr>
 
-                <tr>
+                        <td>
+                            <span class="id-movimiento">
+                                #{{ movimiento.id }}
+                            </span>
+                        </td>
 
-                    <td>
-                        #{{ movimiento.id }}
-                    </td>
+                        <td>
+                            <div class="producto-cell">
 
-                    <td>
-                        <div class="usuario">
-                            <div class="usuario-icono">
-                                {{ movimiento.usuario.nombre_completo[0]|upper }}
+                                <div class="producto-icon">
+                                    <i class="bi bi-box"></i>
+                                </div>
+
+                                <span>
+                                    {{ movimiento.producto.descripcion }}
+                                </span>
+
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="usuario-cell">
+
+                                <i class="bi bi-person-circle"></i>
+
+                                <span>
+                                    {{ movimiento.usuario.nombre_completo }}
+                                </span>
+
+                            </div>
+                        </td>
+
+                        <td>
+                            <span class="cantidad">
+                                {{ movimiento.cantida_stock }}
+                            </span>
+                        </td>
+
+                        <td>
+                            $ {{ "{:,.0f}".format(movimiento.valor_unitario) }}
+                        </td>
+
+                        <td>
+
+                            {% if movimiento.tipo_de_movimiento == 'Entrada' %}
+
+                                <span class="tipo-badge entrada">
+                                    <i class="bi bi-arrow-down-circle"></i>
+                                    Entrada
+                                </span>
+
+                            {% else %}
+
+                                <span class="tipo-badge salida">
+                                    <i class="bi bi-arrow-up-circle"></i>
+                                    Salida
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            <span class="fecha">
+                                {{ movimiento.fecha.strftime('%d/%m/%Y %H:%M') }}
+                            </span>
+                        </td>
+
+                        
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td colspan="9">
+
+                            <div class="sin-movimientos">
+
+                                <div class="sin-movimientos-icon">
+                                    <i class="bi bi-inbox"></i>
+                                </div>
+
+                                <h3>No hay movimientos</h3>
+
+                                <p>
+                                    Todavía no existen movimientos registrados.
+                                </p>
+
                             </div>
 
-                            {{ movimiento.usuario.nombre_completo }}
-                        </div>
-                    </td>
+                        </td>
 
-                    <td>
-                        <span class="producto-id">
-                            #{{ movimiento.producto_id }}
-                        </span>
-                    </td>
+                    </tr>
 
-                    <td>
-                        <span class="cantidad">
-                            {{ movimiento.cantida_stock }}
-                        </span>
-                    </td>
+                    {% endfor %}
 
-                    <td>
-                        <span class="valor">
-                            ${{ "%.2f"|format(movimiento.valor_unitario) }}
-                        </span>
-                    </td>
+                </tbody>
 
-                    <td>
-                        {% if movimiento.tipo_de_movimiento|lower == "entrada" %}
+            </table>
 
-                            <span class="badge-3d entrada">
-                                ↓ Entrada
-                            </span>
-
-                        {% elif movimiento.tipo_de_movimiento|lower == "salida" %}
-
-                            <span class="badge-3d salida">
-                                ↑ Salida
-                            </span>
-
-                        {% elif movimiento.tipo_de_movimiento|lower == "actualización" %}
-
-                            <span class="badge-3d actualizacion">
-                                ✏ Actualización
-                            </span>
-
-                        {% else %}
-
-                            <span class="badge-3d eliminado">
-                                {{ movimiento.tipo_de_movimiento }}
-                            </span>
-
-                        {% endif %}
-
-                    </td>
-
-                    <td>
-                        <span class="fecha">
-                            🕐 {{ movimiento.fecha.strftime('%d/%m/%Y %H:%M') }}
-                        </span>
-                    </td>
-
-                    <td>
-
-                        ${{ "%.2f"|format(movimiento.cantida_stock * movimiento.valor_unitario) }}
-
-                    </td>
-
-                </tr>
-
-                {% endfor %}
-
-            </tbody>
-
-        </table>
+        </div>
 
     </div>
 
 </div>
 
-</div>
-{% endblock %}
+
+<style>
+
+/* =========================================================
+   CONTENEDOR
+========================================================= */
+
+.movimientos-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 25px 20px 40px;
+
+    color: #284236;
+}
+
+
+/* =========================================================
+   ENCABEZADO
+========================================================= */
+
+.movimientos-header {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+
+    margin-bottom: 25px;
+    padding: 25px 30px;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #099b50,
+            #05783d,
+            #034d29
+        );
+
+    border: 1px solid rgba(255,255,255,.20);
+
+    box-shadow:
+        0 7px 0 #02371d,
+        0 18px 35px rgba(0,0,0,.25),
+        inset 0 2px 4px rgba(255,255,255,.16);
+
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* brillo */
+
+.movimientos-header::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 230px;
+    height: 230px;
+
+    right: -70px;
+    top: -100px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.10);
+
+    filter: blur(5px);
+
+}
+
+
+.movimientos-header > div {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* =========================================================
+   BADGE
+========================================================= */
+
+.movimientos-badge {
+
+    display: inline-block;
+
+    padding: 6px 13px;
+
+    border-radius: 20px;
+
+    background: rgba(255,255,255,.14);
+
+    border: 1px solid rgba(255,255,255,.20);
+
+    color: #d9ffe9;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+    margin-bottom: 8px;
+
+}
+
+
+.movimientos-header h2 {
+
+    margin: 0;
+
+    font-size: 28px;
+
+    font-weight: 800;
+
+    color: white;
+
+    text-shadow:
+        0 3px 5px rgba(0,0,0,.30);
+
+}
+
+
+.movimientos-header p {
+
+    margin: 6px 0 0;
+
+    color: rgba(255,255,255,.75);
+
+    font-size: 14px;
+
+}
+
+
+/* =========================================================
+   ICONO HEADER
+========================================================= */
+
+.movimientos-icon {
+
+    width: 65px;
+    height: 65px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 18px;
+
+    color: #ffffff;
+
+    font-size: 28px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #70f0a8,
+            #15bb63,
+            #05783d
+        );
+
+    border: 1px solid rgba(255,255,255,.25);
+
+    box-shadow:
+        0 6px 0 #02542b,
+        0 12px 20px rgba(0,0,0,.25),
+        inset 0 3px 5px rgba(255,255,255,.35);
+
+    transform:
+        perspective(500px)
+        rotateY(-8deg);
+
+}
+
+
+/* =========================================================
+   TARJETA TABLA
+========================================================= */
+
+.tabla-card-3d {
+
+    position: relative;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border-radius: 20px;
+
+    border: 1px solid #d6f0df;
+
+    box-shadow:
+        0 7px 0 #b8d9c4,
+        0 18px 35px rgba(0,0,0,.18);
+
+}
+
+
+/* =========================================================
+   CABECERA DE TABLA
+========================================================= */
+
+.tabla-card-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 20px 25px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff,
+            #f5fbf7
+        );
+
+    border-bottom: 1px solid #dcebe1;
+
+}
+
+
+.tabla-card-top h4 {
+
+    margin: 0 0 6px;
+
+    color: #064b2a;
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+}
+
+
+.tabla-card-top h4 i {
+
+    color: #099b50;
+
+    margin-right: 8px;
+
+}
+
+
+.contador-movimientos {
+
+    color: #718078;
+
+    font-size: 13px;
+
+}
+
+
+/* =========================================================
+   SCROLL
+========================================================= */
+
+.tabla-scroll {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+}
+
+
+/* =========================================================
+   TABLA
+========================================================= */
+
+.tabla-movimientos {
+
+    width: 100%;
+
+    min-width: 1050px;
+
+    border-collapse: separate;
+
+    border-spacing: 0;
+
+}
+
+
+/* =========================================================
+   CABECERA
+========================================================= */
+
+.tabla-movimientos thead th {
+
+    padding: 16px 18px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #05783d,
+            #046331
+        );
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: .8px;
+
+    border-bottom: 3px solid #034d29;
+
+    white-space: nowrap;
+
+    text-shadow:
+        0 1px 2px rgba(0,0,0,.25);
+
+}
+
+
+/* =========================================================
+   PRIMERA COLUMNA
+========================================================= */
+
+.tabla-movimientos thead th:first-child {
+
+    border-top-left-radius: 0;
+
+}
+
+
+.tabla-movimientos thead th:last-child {
+
+    border-top-right-radius: 0;
+
+}
+
+
+/* =========================================================
+   FILAS
+========================================================= */
+
+.tabla-movimientos tbody tr {
+
+    background: #ffffff;
+
+    transition:
+        transform .22s ease,
+        background .22s ease,
+        box-shadow .22s ease;
+
+}
+
+
+.tabla-movimientos tbody tr:nth-child(even) {
+
+    background: #f7fbf8;
+
+}
+
+
+.tabla-movimientos tbody tr:hover {
+
+    background: #eaf8ef;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 18px rgba(5,120,61,.12);
+
+}
+
+
+/* =========================================================
+   CELDAS
+========================================================= */
+
+.tabla-movimientos tbody td {
+
+    padding: 15px 18px;
+
+    color: #40554a;
+
+    font-size: 13px;
+
+    border-bottom:
+        1px solid #e5eee8;
+
+    vertical-align: middle;
+
+}
+
+
+/* =========================================================
+   ID
+========================================================= */
+
+.id-movimiento {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 6px 9px;
+
+    border-radius: 8px;
+
+    background: #e7f8ed;
+
+    color: #078b47;
+
+    font-weight: 800;
+
+    font-family: monospace;
+
+    border: 1px solid #ccebd7;
+
+}
+
+
+/* =========================================================
+   PRODUCTO
+========================================================= */
+
+.producto-cell {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color: #284236;
+
+    font-weight: 700;
+
+}
+.navbar-brand {
+
+    font-size: 1.5rem;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+    color: white !important;
+
+    text-shadow:
+        0 2px 3px rgba(0,0,0,.45);
+
+    transition:
+        .25s;
+}
+
+
+
+.navbar-brand i {
+
+    margin-right: 8px;
+
+    color:
+        #86efac;
+}
+
+.producto-icon {
+
+    width: 36px;
+    height: 36px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            145deg,
+            #15bb63,
+            #05783d
+        );
+
+    box-shadow:
+        0 4px 0 #02542b,
+        inset 0 2px 3px rgba(255,255,255,.25);
+
+}
+
+
+/* =========================================================
+   USUARIO
+========================================================= */
+
+.usuario-cell {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #53655a;
+
+    font-weight: 600;
+
+}
+
+
+.usuario-cell i {
+
+    color: #099b50;
+
+    font-size: 20px;
+
+}
+
+
+/* =========================================================
+   CANTIDAD
+========================================================= */
+
+.cantidad {
+
+    display: inline-flex;
+
+    min-width: 40px;
+
+    justify-content: center;
+
+    padding: 6px 10px;
+
+    border-radius: 9px;
+
+    background: #e8f8ee;
+
+    color: #078b47;
+
+    border: 1px solid #d1eedb;
+
+    font-weight: 800;
+
+    box-shadow:
+        inset 0 1px 2px rgba(255,255,255,.8);
+
+}
+
+
+/* =========================================================
+   TIPO
+========================================================= */
+
+.tipo-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 7px 11px;
+
+    border-radius: 10px;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+}
+
+
+/* ENTRADA */
+
+.tipo-badge.entrada {
+
+    color: #078b47;
+
+    background: #d9f8e5;
+
+    border: 1px solid #bceaca;
+
+    box-shadow:
+        0 3px 8px rgba(7,139,71,.12);
+
+}
+
+
+/* SALIDA */
+
+.tipo-badge.salida {
+
+    color: #d63c3c;
+
+    background: #ffe1e1;
+
+    border: 1px solid #f5c4c4;
+
+    box-shadow:
+        0 3px 8px rgba(214,60,60,.10);
+
+}
+
+
+/* =========================================================
+   FECHA
+========================================================= */
+
+.fecha {
+
+    color: #718078;
+
+    white-space: nowrap;
+
+    font-size: 12px;
+
+}
+
+
+/* =========================================================
+   ESTADO
+========================================================= */
+
+.estado {
+
+    display: inline-block;
+
+    padding: 6px 10px;
+
+    border-radius: 8px;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+}
+
+
+.estado.activo {
+
+    color: #078b47;
+
+    background: #d9f8e5;
+
+    border: 1px solid #bceaca;
+
+}
+
+
+.estado.inactivo {
+
+    color: #718078;
+
+    background: #edf1ee;
+
+    border: 1px solid #dce3de;
+
+}
+
+
+/* =========================================================
+   ACCIONES
+========================================================= */
+
+.acciones {
+
+    display: flex;
+
+    gap: 7px;
+
+}
+
+
+.btn-accion {
+
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+/* EDITAR */
+
+.btn-accion.editar {
+
+    color: white;
+
+    background:
+        linear-gradient(
+            145deg,
+            #15bb63,
+            #05783d
+        );
+
+    border: 1px solid rgba(5,120,61,.25);
+
+    box-shadow:
+        0 4px 0 #02542b,
+        0 7px 12px rgba(5,120,61,.18),
+        inset 0 2px 3px rgba(255,255,255,.20);
+
+}
+
+
+.btn-accion.editar:hover {
+
+    transform:
+        translateY(-3px)
+        scale(1.05);
+
+    background:
+        linear-gradient(
+            145deg,
+            #20d875,
+            #078b47
+        );
+
+    box-shadow:
+        0 7px 0 #02542b,
+        0 12px 18px rgba(5,120,61,.25);
+
+}
+
+
+/* =========================================================
+   SIN MOVIMIENTOS
+========================================================= */
+
+.sin-movimientos {
+
+    text-align: center;
+
+    padding: 65px 20px;
+
+}
+
+
+.sin-movimientos-icon {
+
+    width: 75px;
+    height: 75px;
+
+    margin: 0 auto 18px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 20px;
+
+    color: #078b47;
+
+    font-size: 30px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #e5f8eb,
+            #cdeed9
+        );
+
+    border: 1px solid #c6e8d2;
+
+    box-shadow:
+        0 6px 0 #b1d8be,
+        0 12px 20px rgba(0,0,0,.10),
+        inset 0 2px 4px rgba(255,255,255,.8);
+
+}
+
+
+.sin-movimientos h3 {
+
+    color: #284236;
+
+    font-size: 18px;
+
+    margin: 0 0 5px;
+
+    font-weight: 800;
+
+}
+
+
+.sin-movimientos p {
+
+    color: #849088;
+
+    margin: 0;
+
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.tabla-scroll::-webkit-scrollbar {
+
+    height: 9px;
+
+}
+
+
+.tabla-scroll::-webkit-scrollbar-track {
+
+    background: #edf5ef;
+
+}
+
+
+.tabla-scroll::-webkit-scrollbar-thumb {
+
+    background:
+        linear-gradient(
+            90deg,
+            #05783d,
+            #15bb63
+        );
+
+    border-radius: 20px;
+
+    border: 2px solid #edf5ef;
+
+}
+
+
+.tabla-scroll::-webkit-scrollbar-thumb:hover {
+
+    background:
+        linear-gradient(
+            90deg,
+            #046331,
+            #099b50
+        );
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .movimientos-wrapper {
+
+        padding: 15px 10px 30px;
+
+    }
+
+
+    .movimientos-header {
+
+        padding: 20px;
+
+    }
+
+
+    .movimientos-header h2 {
+
+        font-size: 22px;
+
+    }
+
+
+    .movimientos-icon {
+
+        width: 52px;
+        height: 52px;
+
+        font-size: 22px;
+
+    }
+
+
+    .tabla-card-top {
+
+        padding: 18px;
+
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .movimientos-header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+
+    .movimientos-icon {
+
+        display: none;
+
+    }
+
+}
+
+</style>
