@@ -1466,18 +1466,11 @@
                         ================================================== -->
 
                         <td>
-
                             <form
                                 method="POST"
                                 action="{{ url_for('cambiar_estado_producto', id=producto.id) }}"
                                 class="form-estado"
->
-
-                                <input
-                                    type="hidden"
-                                    name="activo"
-                                    value="0"
-                                >
+                            >
 
                                 <label class="switch">
 
@@ -1496,26 +1489,19 @@
                                 </label>
 
                                 {% if producto.activo %}
-
                                     <span class="estado activo">
                                         Activo
                                     </span>
-
                                 {% else %}
-
                                     <span class="estado inactivo">
                                         Inactivo
                                     </span>
-
                                 {% endif %}
 
                             </form>
-
-
                         </td>
-
-
                     </tr>
+
 
                     {% else %}
 

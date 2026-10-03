@@ -476,110 +476,49 @@ class ProductosController(FlaskController):
         )
     
 
-
     @app.route('/cambiar_estado_producto/<int:id>', methods=['POST'])
-    @login_required
     def cambiar_estado_producto(id):
-
-    # =========================================================
-    # BUSCAR PRODUCTO
-    # =========================================================
 
         producto = db_session.get(Productos, id)
 
         if producto is None:
-            flash('Producto no encontrado.', 'danger')
+            flash('Producto no encontrado.')
             return redirect(url_for('ver_productos'))
 
+        # Si el checkbox está marcado, Flask recibe "1"
+        activo = request.form.get('activo')
 
-    # =========================================================
-    # ESTADO ENVIADO POR EL SWITCH
-    # =========================================================
+        # ACTIVAR
+        if activo == '1':
 
-        nuevo_estado = request.form.get('activo') == '1'
+            # Verificar el stock actual
+            if producto.cantida_stock > 0:
 
+                producto.activo = True
 
-    # =========================================================
-    # DESACTIVAR
-    # =========================================================
+                flash('Producto activado correctamente.')
 
-        if not nuevo_estado:
+            else:
 
-        # Guardamos el stock ANTES de ponerlo en cero
-            stock_anterior = producto.cantida_stock or 0
+                producto.activo = False
 
+                flash('No se puede activar el producto porque no tiene stock.')
 
-        # Registrar salida
-            if stock_anterior > 0:
-
-                movimiento = Movimientos(
-                    usuario_id=current_user.id,
-                    producto_id=producto.id,
-                    cantida_stock=stock_anterior,
-                    valor_unitario=producto.valor_unitario,
-                    tipo_de_movimiento='Salida',
-                    fecha=datetime.datetime.now(),
-                    activo=True
-                )
-
-                db_session.add(movimiento)
-
-
-        # Cambiar producto
-            producto.cantida_stock = 0
-            producto.activo = False
-
-
-            mensaje = (
-                f'Producto "{producto.descripcion}" desactivado. '
-                f'Se registró una salida de {stock_anterior} unidades.'
-            )
-
-
-    # =========================================================
-    # ACTIVAR
-    # =========================================================
-
+        # DESACTIVAR
         else:
 
-            producto.activo = True
+            producto.activo = False
 
-            mensaje = (
-                f'Producto "{producto.descripcion}" activado correctamente.'
-            )
+            flash('Producto desactivado correctamente.')
 
+        db_session.commit()
 
-    # =========================================================
-    # GUARDAR
-    # =========================================================
+        return redirect(url_for('ver_productos'))
 
-        try:
-
-            db_session.commit()
-
-            flash(
-                mensaje,
-                'success'
-            )
-
-        except Exception as e:
-
-            db_session.rollback()
-
-            print(
-                "ERROR CAMBIANDO ESTADO DEL PRODUCTO:",
-                e
-            )
-
-            flash(
-                'No fue posible cambiar el estado del producto.',
-                'danger'
-            )
+    
 
 
-        return redirect(
-            url_for('ver_productos')
-        )
+
 
 
 

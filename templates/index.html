@@ -3,910 +3,1488 @@
 {% block contenido %}
 
 <style>
+/* =========================================================
+DASHBOARD 3D
+========================================================= */
+
+.dashboard-container {
+width: 100%;
+max-width: 1250px;
+margin: 0 auto;
+padding: 30px 22px 50px;
+perspective: 1200px;
+}
+
+/* =========================================================
+FONDO / AMBIENTE
+========================================================= */
+
+.dashboard-container::before,
+.dashboard-container::after {
+content: "";
+position: fixed;
+z-index: -1;
+border-radius: 50%;
+filter: blur(80px);
+pointer-events: none;
+}
+
+.dashboard-container::before {
+width: 350px;
+height: 350px;
+top: 80px;
+left: -120px;
+background: rgba(21, 187, 99, .20);
+}
+
+.dashboard-container::after {
+width: 400px;
+height: 400px;
+right: -150px;
+bottom: 50px;
+background: rgba(5, 120, 61, .18);
+}
+
+/* =========================================================
+ENCABEZADO
+========================================================= */
+
+.dashboard-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 25px;
+margin-bottom: 38px;
+}
+
+.dashboard-title {
+position: relative;
+color: white;
+font-size: clamp(2rem, 4vw, 3rem);
+font-weight: 900;
+letter-spacing: -1px;
+margin: 0;
+
+text-shadow:
+    0 3px 5px rgba(0,0,0,.35),
+    0 10px 25px rgba(0,0,0,.25);
+
+}
+
+.dashboard-title::after {
+content: "";
+position: absolute;
+left: 0;
+bottom: -8px;
+width: 70px;
+height: 4px;
+border-radius: 20px;
+background: linear-gradient(
+90deg,
+#72f3aa,
+transparent
+);
+}
+
+.dashboard-title i {
+color: #8affba;
+margin-right: 10px;
+filter: drop-shadow(0 4px 6px rgba(0,0,0,.25));
+}
+
+.dashboard-subtitle {
+color: rgba(255,255,255,.72);
+margin: 16px 0 0;
+font-size: .95rem;
+}
+
+/* =========================================================
+FECHA
+========================================================= */
+
+.dashboard-date {
+position: relative;
+display: flex;
+align-items: center;
+gap: 9px;
 
-    /* =========================================
-       DASHBOARD
-    ========================================= */
-
-    .dashboard-container {
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 25px 20px 40px;
-    }
-
-    /* =========================================
-       ENCABEZADO
-    ========================================= */
-
-    .dashboard-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 20px;
-        margin-bottom: 35px;
-    }
-
-    .dashboard-title {
-        color: white;
-        font-size: 2.8rem;
-        font-weight: 800;
-        margin: 0;
-
-        text-shadow:
-            0 3px 5px rgba(0,0,0,.35),
-            0 8px 18px rgba(0,0,0,.25);
-    }
-
-    .dashboard-title i {
-        color: #baffd8;
-        margin-right: 10px;
-    }
-
-    .dashboard-subtitle {
-        color: rgba(255,255,255,.75);
-        margin: 8px 0 0;
-        font-size: 1rem;
-    }
-
-    /* =========================================
-       FECHA
-    ========================================= */
-
-    .dashboard-date {
-        padding: 12px 18px;
-        border-radius: 14px;
-
-        background: rgba(0,0,0,.18);
-        border: 1px solid rgba(255,255,255,.15);
-
-        color: white;
-        font-size: .9rem;
-
-        box-shadow:
-            inset 0 1px 2px rgba(255,255,255,.08),
-            0 8px 20px rgba(0,0,0,.15);
-    }
-
-    /* =========================================
-       ESTADÍSTICAS
-    ========================================= */
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-        margin-bottom: 35px;
-    }
-
-    .stat-card {
-        position: relative;
-        overflow: hidden;
-
-        padding: 22px;
-        min-height: 145px;
-
-        border-radius: 18px;
-
-        background:
-            linear-gradient(
-                145deg,
-                #099b50,
-                #05783d,
-                #034d29
-            );
-
-        border: 1px solid rgba(255,255,255,.20);
-
-        box-shadow:
-            0 7px 0 #02371d,
-            0 18px 30px rgba(0,0,0,.25),
-            inset 0 2px 4px rgba(255,255,255,.15);
-
-        color: white;
+padding: 14px 20px;
 
-        transition: .3s ease;
-    }
+border-radius: 16px;
 
-    .stat-card:hover {
-        transform: translateY(-6px);
+color: white;
+font-size: .9rem;
+font-weight: 700;
 
-        box-shadow:
-            0 11px 0 #02371d,
-            0 25px 40px rgba(0,0,0,.35),
-            inset 0 2px 4px rgba(255,255,255,.20);
-    }
+background:
+    linear-gradient(
+        145deg,
+        rgba(255,255,255,.16),
+        rgba(255,255,255,.05)
+    );
 
-    .stat-card::before {
-        content: "";
+border: 1px solid rgba(255,255,255,.20);
 
-        position: absolute;
+box-shadow:
+    0 12px 25px rgba(0,0,0,.20),
+    inset 0 1px 1px rgba(255,255,255,.20);
 
-        width: 130px;
-        height: 130px;
+backdrop-filter: blur(12px);
 
-        right: -55px;
-        top: -55px;
+}
 
-        border-radius: 50%;
+.dashboard-date i {
+color: #7df4ad;
+}
 
-        background: rgba(255,255,255,.10);
+/* =========================================================
+ESTADÍSTICAS
+========================================================= */
 
-        filter: blur(5px);
-    }
+.stats-grid {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 22px;
+margin-bottom: 35px;
+}
 
-    .stat-icon {
-        width: 48px;
-        height: 48px;
+.stat-card {
+position: relative;
+min-height: 165px;
+overflow: hidden;
 
-        display: flex;
-        align-items: center;
-        justify-content: center;
+padding: 23px;
 
-        border-radius: 14px;
+border-radius: 22px;
 
-        background:
-            linear-gradient(
-                145deg,
-                #70f0a8,
-                #15bb63,
-                #05783d
-            );
+color: white;
 
-        box-shadow:
-            0 5px 0 #02542b,
-            inset 0 3px 5px rgba(255,255,255,.35);
+background:
+    linear-gradient(
+        145deg,
+        #12a95a 0%,
+        #087d42 45%,
+        #034c29 100%
+    );
 
-        font-size: 20px;
-        margin-bottom: 15px;
-    }
+border: 1px solid rgba(255,255,255,.22);
 
-    .stat-card h4 {
-        margin: 0;
-        font-size: .9rem;
-        color: rgba(255,255,255,.75);
-        font-weight: 600;
-    }
+box-shadow:
+    0 8px 0 #02351d,
+    0 18px 30px rgba(0,0,0,.25),
+    inset 0 2px 3px rgba(255,255,255,.20);
 
-    .stat-number {
-        margin-top: 5px;
+transform: translateY(0) rotateX(0);
+transition:
+    transform .35s ease,
+    box-shadow .35s ease;
 
-        font-size: 2rem;
-        font-weight: 900;
-        color: white;
+}
 
-        text-shadow:
-            0 2px 4px rgba(0,0,0,.30);
-    }
+.stat-card:hover {
+transform:
+translateY(-9px)
+rotateX(3deg)
+rotateY(-2deg);
 
-    /* =========================================
-       CONTENIDO PRINCIPAL
-    ========================================= */
+box-shadow:
+    0 13px 0 #02351d,
+    0 28px 45px rgba(0,0,0,.32),
+    inset 0 2px 5px rgba(255,255,255,.25);
 
-    .dashboard-grid {
-        display: grid;
-        grid-template-columns: 1.5fr 1fr;
-        gap: 25px;
-        margin-bottom: 30px;
-    }
+}
 
-    /* =========================================
-       PANELES
-    ========================================= */
+/* Brillo superior */
 
-    .dashboard-panel {
-        background: rgba(255,255,255,.96);
+.stat-card::before {
+content: "";
+position: absolute;
 
-        border-radius: 20px;
+width: 190px;
+height: 190px;
 
-        padding: 25px;
+right: -80px;
+top: -90px;
 
-        box-shadow:
-            0 15px 35px rgba(0,0,0,.20);
+border-radius: 50%;
 
-        border:
-            1px solid rgba(255,255,255,.5);
-    }
+background:
+    radial-gradient(
+        circle,
+        rgba(255,255,255,.25),
+        transparent 65%
+    );
 
-    .panel-title {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 20px;
-    }
+pointer-events: none;
 
-    .panel-title h2 {
-        margin: 0;
+}
 
-        color: #064b2a;
+/* Reflejo diagonal */
 
-        font-size: 1.3rem;
-        font-weight: 800;
-    }
+.stat-card::after {
+content: "";
+position: absolute;
 
-    .panel-title i {
-        color: #099b50;
-        margin-right: 7px;
-    }
+width: 160%;
+height: 45px;
 
-    /* =========================================
-       ACCIONES RÁPIDAS
-    ========================================= */
+left: -30%;
+top: 18px;
 
-    .quick-actions {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-    }
+transform: rotate(-25deg);
 
-    .quick-action {
-        display: flex;
-        align-items: center;
+background: rgba(255,255,255,.07);
 
-        gap: 15px;
+filter: blur(4px);
 
-        padding: 17px;
+pointer-events: none;
 
-        border-radius: 15px;
+}
 
-        text-decoration: none;
+/* =========================================================
+ICONOS ESTADÍSTICAS
+========================================================= */
 
-        color: #064b2a;
+.stat-icon {
+position: relative;
+z-index: 2;
 
-        background: #f0faf4;
+width: 52px;
+height: 52px;
 
-        border: 1px solid #d6f0df;
+display: flex;
+align-items: center;
+justify-content: center;
 
-        transition: .25s ease;
-    }
+border-radius: 15px;
 
-    .quick-action:hover {
-        transform: translateY(-4px);
+background:
+    linear-gradient(
+        145deg,
+        #86ffc0,
+        #20c86d 50%,
+        #07803f
+    );
 
-        background: #e2f8ea;
+color: white;
 
-        color: #05783d;
+font-size: 21px;
 
-        box-shadow:
-            0 8px 18px rgba(0,0,0,.10);
-    }
+box-shadow:
+    0 6px 0 #02542b,
+    0 10px 18px rgba(0,0,0,.18),
+    inset 0 3px 5px rgba(255,255,255,.35);
 
-    .quick-icon {
-        width: 48px;
-        height: 48px;
+margin-bottom: 16px;
 
-        flex-shrink: 0;
+}
 
-        display: flex;
-        align-items: center;
-        justify-content: center;
+.stat-card h4 {
+position: relative;
+z-index: 2;
 
-        border-radius: 13px;
+margin: 0;
 
-        background:
-            linear-gradient(
-                145deg,
-                #15bb63,
-                #05783d
-            );
+color: rgba(255,255,255,.72);
 
-        color: white;
+font-size: .85rem;
+font-weight: 700;
 
-        box-shadow:
-            0 4px 0 #02542b;
-    }
+}
 
-    .quick-action strong {
-        display: block;
-        font-size: .95rem;
-    }
+.stat-number {
+position: relative;
+z-index: 2;
 
-    .quick-action span {
-        display: block;
+margin-top: 3px;
 
-        margin-top: 4px;
+font-size: 2.2rem;
+line-height: 1;
 
-        font-size: .78rem;
+font-weight: 900;
 
-        color: #6c7c72;
-    }
+text-shadow:
+    0 3px 5px rgba(0,0,0,.3);
 
-    /* =========================================
-       MOVIMIENTOS
-    ========================================= */
+}
 
-    .movement-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
+/* =========================================================
+GRID PRINCIPAL
+========================================================= */
 
-    .movement {
-        display: flex;
+.dashboard-grid {
+display: grid;
+grid-template-columns: 1.45fr 1fr;
+gap: 25px;
+margin-bottom: 30px;
+}
 
-        align-items: center;
-        justify-content: space-between;
+/* =========================================================
+PANELES
+========================================================= */
 
-        gap: 15px;
+.dashboard-panel {
+position: relative;
+overflow: hidden;
 
-        padding: 13px 15px;
+padding: 26px;
 
-        border-radius: 12px;
+border-radius: 24px;
 
-        background: #f7faf8;
+background:
+    linear-gradient(
+        145deg,
+        rgba(255,255,255,.98),
+        rgba(244,250,247,.96)
+    );
 
-        border: 1px solid #e8eee9;
-    }
+border: 1px solid rgba(255,255,255,.80);
 
-    .movement-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
+box-shadow:
+    0 12px 0 rgba(0,72,38,.08),
+    0 22px 45px rgba(0,0,0,.18),
+    inset 0 1px 1px white;
 
-        min-width: 0;
-    }
+transition:
+    transform .3s ease,
+    box-shadow .3s ease;
 
-    .movement-icon {
-        width: 38px;
-        height: 38px;
+}
 
-        flex-shrink: 0;
+.dashboard-panel:hover {
+transform: translateY(-4px);
 
-        display: flex;
-        align-items: center;
-        justify-content: center;
+box-shadow:
+    0 15px 0 rgba(0,72,38,.08),
+    0 30px 55px rgba(0,0,0,.22),
+    inset 0 1px 1px white;
 
-        border-radius: 10px;
-    }
+}
 
-    .entrada {
-        background: #d9f8e5;
-        color: #078b47;
-    }
+/* brillo del panel */
 
-    .salida {
-        background: #ffe1e1;
-        color: #d63c3c;
-    }
+.dashboard-panel::before {
+content: "";
 
-    .movement-name {
-        color: #284236;
+position: absolute;
 
-        font-weight: 700;
+width: 250px;
+height: 250px;
 
-        font-size: .88rem;
+right: -130px;
+top: -130px;
 
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+border-radius: 50%;
 
-    .movement-date {
-        color: #849088;
+background:
+    radial-gradient(
+        circle,
+        rgba(21,187,99,.12),
+        transparent 70%
+    );
 
-        font-size: .75rem;
+pointer-events: none;
 
-        margin-top: 3px;
-    }
+}
 
-    .movement-value {
-        flex-shrink: 0;
+/* =========================================================
+TITULOS
+========================================================= */
 
-        font-weight: 800;
-        font-size: .9rem;
-    }
+.panel-title {
+position: relative;
+z-index: 2;
 
-    .movement-value.positive {
-        color: #078b47;
-    }
+display: flex;
+justify-content: space-between;
+align-items: center;
 
-    .movement-value.negative {
-        color: #d63c3c;
-    }
+gap: 15px;
 
-    /* =========================================
-       ESTADO DEL INVENTARIO
-    ========================================= */
+margin-bottom: 22px;
 
-    .stock-box {
-        margin-top: 20px;
-    }
+}
 
-    .stock-header {
-        display: flex;
+.panel-title h2 {
+margin: 0;
 
-        justify-content: space-between;
+color: #064b2a;
 
-        margin-bottom: 8px;
+font-size: 1.25rem;
+font-weight: 900;
 
-        color: #53655a;
+}
 
-        font-size: .85rem;
+.panel-title i {
+color: #099b50;
+margin-right: 7px;
+}
 
-        font-weight: 600;
-    }
+/* =========================================================
+ACCIONES RÁPIDAS
+========================================================= */
 
-    .stock-bar {
-        width: 100%;
-        height: 12px;
+.quick-actions {
+position: relative;
+z-index: 2;
 
-        border-radius: 20px;
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 16px;
 
-        overflow: hidden;
+}
 
-        background: #e4ebe6;
-    }
+.quick-action {
+position: relative;
 
-    .stock-progress {
-        height: 100%;
+display: flex;
+align-items: center;
 
-        border-radius: 20px;
+gap: 15px;
 
-        background:
-            linear-gradient(
-                90deg,
-                #05783d,
-                #42d985,
-                #8af5b5
-            );
+min-height: 82px;
 
-        box-shadow:
-            0 2px 6px rgba(5,120,61,.35);
+padding: 16px;
 
-        transition: width .5s ease;
-    }
+border-radius: 17px;
 
-    /* =========================================
-       BOTÓN
-    ========================================= */
+text-decoration: none;
 
-    .btn-dashboard {
-        display: inline-flex;
+color: #064b2a;
 
-        align-items: center;
+background:
+    linear-gradient(
+        145deg,
+        #f8fffb,
+        #e8f6ed
+    );
 
-        gap: 7px;
+border: 1px solid #d5ebdd;
 
-        padding: 9px 15px;
+box-shadow:
+    0 5px 0 #c7dfd0,
+    0 9px 16px rgba(0,0,0,.07),
+    inset 0 1px white;
 
-        border-radius: 10px;
+transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    background .25s ease;
 
-        text-decoration: none;
+}
 
-        color: #078b47;
+.quick-action:hover {
+transform:
+translateY(-5px)
+translateX(2px);
 
-        background: #e9f8ef;
+background:
+    linear-gradient(
+        145deg,
+        #ffffff,
+        #dcf8e7
+    );
 
-        font-size: .82rem;
+color: #05783d;
 
-        font-weight: 700;
+box-shadow:
+    0 8px 0 #b9d9c5,
+    0 15px 25px rgba(0,0,0,.12),
+    inset 0 1px white;
 
-        transition: .2s;
-    }
+}
 
-    .btn-dashboard:hover {
-        background: #d6f3e1;
-        color: #056b36;
-    }
+/* =========================================================
+ICONOS ACCIONES
+========================================================= */
 
-    /* =========================================
-       ALERTA STOCK
-    ========================================= */
+.quick-icon {
+position: relative;
 
-    .stock-alert {
-        margin-top: 18px;
+width: 50px;
+height: 50px;
 
-        display: flex;
+flex-shrink: 0;
 
-        align-items: center;
+display: flex;
+align-items: center;
+justify-content: center;
 
-        gap: 12px;
+border-radius: 14px;
 
-        padding: 14px;
+background:
+    linear-gradient(
+        145deg,
+        #29d976,
+        #07934a 55%,
+        #045f31
+    );
 
-        border-radius: 12px;
+color: white;
 
-        background: #fff8df;
+font-size: 18px;
 
-        border: 1px solid #f6df8b;
+box-shadow:
+    0 5px 0 #024b27,
+    0 9px 14px rgba(0,0,0,.16),
+    inset 0 2px 4px rgba(255,255,255,.25);
 
-        color: #856b14;
+transition: .25s ease;
 
-        font-size: .85rem;
-    }
+}
 
-    .stock-alert i {
-        flex-shrink: 0;
+.quick-action:hover .quick-icon {
+transform:
+rotate(-5deg)
+scale(1.05);
+}
 
-        font-size: 20px;
+.quick-action strong {
+display: block;
+font-size: .92rem;
+font-weight: 800;
+}
 
-        color: #d5a900;
-    }
+.quick-action span {
+display: block;
 
-    /* =========================================
-       RESPONSIVE
-    ========================================= */
+margin-top: 5px;
 
-    @media (max-width: 1000px) {
+font-size: .75rem;
 
-        .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
+color: #718078;
 
-        .dashboard-grid {
-            grid-template-columns: 1fr;
-        }
+}
 
-    }
+/* =========================================================
+ESTADO INVENTARIO
+========================================================= */
 
-    @media (max-width: 700px) {
+.stock-box {
+position: relative;
+z-index: 2;
 
-        .dashboard-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
+margin-top: 25px;
 
-        .dashboard-title {
-            font-size: 2.2rem;
-        }
+padding: 18px;
 
-        .quick-actions {
-            grid-template-columns: 1fr;
-        }
+border-radius: 17px;
 
-    }
+background: #f4faf6;
 
-    @media (max-width: 480px) {
+border: 1px solid #e0eee4;
 
-        .dashboard-container {
-            padding: 15px 10px 30px;
-        }
+box-shadow:
+    inset 0 2px 5px rgba(0,0,0,.03);
 
-        .stats-grid {
-            grid-template-columns: 1fr;
-        }
+}
 
-        .dashboard-title {
-            font-size: 1.9rem;
-        }
+.stock-header {
+display: flex;
+justify-content: space-between;
 
-        .dashboard-panel {
-            padding: 18px;
-        }
+margin-bottom: 10px;
 
-        .panel-title {
-            align-items: flex-start;
-        }
+color: #53655a;
 
-        .btn-dashboard {
-            padding: 8px 10px;
-        }
+font-size: .83rem;
+font-weight: 700;
 
-    }
+}
 
-</style>
+.stock-header span:last-child {
+color: #078b47;
+font-weight: 900;
+}
 
+/* Barra */
 
-<div class="dashboard-container">
+.stock-bar {
+width: 100%;
+height: 14px;
 
-    <!-- =========================================
-         ENCABEZADO
-    ========================================== -->
+overflow: hidden;
 
-    <div class="dashboard-header">
+border-radius: 20px;
 
-        <div>
+background: #dfe9e2;
 
-            <h1 class="dashboard-title">
-                <i class="fas fa-chart-line"></i>
-                Dashboard
-            </h1>
+box-shadow:
+    inset 0 2px 4px rgba(0,0,0,.10);
 
-            <p class="dashboard-subtitle">
-                Resumen general de tu inventario
-            </p>
+}
 
+.stock-progress {
+position: relative;
+
+height: 100%;
+
+border-radius: 20px;
+
+background:
+    linear-gradient(
+        90deg,
+        #05783d,
+        #22c96c,
+        #8af5b5
+    );
+
+box-shadow:
+    0 2px 8px rgba(5,120,61,.40);
+
+transition: width .6s ease;
+
+}
+
+.stock-progress::after {
+content: "";
+
+position: absolute;
+
+top: 2px;
+left: 5px;
+right: 5px;
+
+height: 3px;
+
+border-radius: 10px;
+
+background: rgba(255,255,255,.35);
+
+}
+
+/* =========================================================
+ALERTA
+========================================================= */
+
+.stock-alert {
+position: relative;
+z-index: 2;
+
+margin-top: 18px;
+
+display: flex;
+align-items: center;
+
+gap: 12px;
+
+padding: 15px;
+
+border-radius: 15px;
+
+background:
+    linear-gradient(
+        145deg,
+        #fffbed,
+        #fff5ce
+    );
+
+border: 1px solid #f2dd91;
+
+color: #856b14;
+
+font-size: .84rem;
+
+box-shadow:
+    0 5px 12px rgba(130,100,0,.08),
+    inset 0 1px white;
+
+}
+
+.stock-alert i {
+flex-shrink: 0;
+
+font-size: 20px;
+
+color: #d5a900;
+
+filter: drop-shadow(0 2px 3px rgba(0,0,0,.15));
+
+}
+
+/* =========================================================
+BOTÓN VER TODOS
+========================================================= */
+
+.btn-dashboard {
+display: inline-flex;
+align-items: center;
+gap: 7px;
+
+padding: 10px 14px;
+
+border-radius: 11px;
+
+text-decoration: none;
+
+color: #078b47;
+
+background:
+    linear-gradient(
+        145deg,
+        #eefaf2,
+        #dcf3e5
+    );
+
+border: 1px solid #cce9d7;
+
+font-size: .78rem;
+font-weight: 800;
+
+box-shadow:
+    0 3px 0 #c2dfcc;
+
+transition: .2s ease;
+
+}
+
+.btn-dashboard:hover {
+transform: translateY(-2px);
+
+color: #056b36;
+
+box-shadow:
+    0 5px 0 #bddac7,
+    0 8px 15px rgba(0,0,0,.08);
+
+}
+
+/* =========================================================
+MOVIMIENTOS
+========================================================= */
+
+.movement-list {
+position: relative;
+z-index: 2;
+
+display: flex;
+flex-direction: column;
+gap: 12px;
+
+}
+
+.movement {
+position: relative;
+
+display: flex;
+
+align-items: center;
+justify-content: space-between;
+
+gap: 15px;
+
+padding: 13px 15px;
+
+border-radius: 14px;
+
+background:
+    linear-gradient(
+        145deg,
+        #ffffff,
+        #f4f8f5
+    );
+
+border: 1px solid #e3ebe5;
+
+box-shadow:
+    0 4px 0 #dce6df,
+    0 8px 14px rgba(0,0,0,.05),
+    inset 0 1px white;
+
+transition: .25s ease;
+
+}
+
+.movement:hover {
+transform: translateX(4px);
+
+box-shadow:
+    0 5px 0 #d3dfd7,
+    0 12px 20px rgba(0,0,0,.09);
+
+}
+
+.movement-info {
+display: flex;
+align-items: center;
+
+gap: 12px;
+
+min-width: 0;
+
+}
+
+/* =========================================================
+ICONO MOVIMIENTO
+========================================================= */
+
+.movement-icon {
+width: 40px;
+height: 40px;
+
+flex-shrink: 0;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+border-radius: 11px;
+
+box-shadow:
+    0 4px 0 rgba(0,0,0,.08),
+    inset 0 2px 4px rgba(255,255,255,.6);
+
+}
+
+.entrada {
+background:
+linear-gradient(
+145deg,
+#e9fff1,
+#c9f4d9
+);
+
+color: #078b47;
+
+}
+
+.salida {
+background:
+linear-gradient(
+145deg,
+#fff0f0,
+#ffdada
+);
+
+color: #d63c3c;
+
+}
+
+.movement-name {
+color: #284236;
+
+font-weight: 800;
+
+font-size: .85rem;
+
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+
+}
+
+.movement-date {
+color: #849088;
+
+font-size: .72rem;
+
+margin-top: 3px;
+
+}
+
+.movement-value {
+flex-shrink: 0;
+
+min-width: 45px;
+
+text-align: right;
+
+font-weight: 900;
+font-size: .9rem;
+
+}
+
+.movement-value.positive {
+color: #078b47;
+}
+
+.movement-value.negative {
+color: #d63c3c;
+}
+
+/* =========================================================
+RESPONSIVE
+========================================================= */
+
+@media (max-width: 1050px) {
+
+.stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.dashboard-grid {
+    grid-template-columns: 1fr;
+}
+
+}
+
+@media (max-width: 700px) {
+
+.dashboard-container {
+    padding: 22px 15px 40px;
+}
+
+.dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.dashboard-date {
+    width: 100%;
+    justify-content: center;
+}
+
+.dashboard-title {
+    font-size: 2.2rem;
+}
+
+.quick-actions {
+    grid-template-columns: 1fr;
+}
+
+}
+
+@media (max-width: 500px) {
+
+.stats-grid {
+    grid-template-columns: 1fr;
+}
+
+.stat-card {
+    min-height: 145px;
+}
+
+.dashboard-title {
+    font-size: 1.9rem;
+}
+
+.dashboard-panel {
+    padding: 18px;
+    border-radius: 19px;
+}
+
+.panel-title {
+    align-items: flex-start;
+}
+
+.panel-title h2 {
+    font-size: 1.1rem;
+}
+
+.btn-dashboard {
+    padding: 8px 10px;
+}
+
+.movement {
+    padding: 11px;
+}
+
+}
+
+/* =========================================================
+ANIMACIÓN DE ENTRADA
+========================================================= */
+
+@keyframes dashboardAppear {
+
+from {
+    opacity: 0;
+    transform: translateY(18px);
+}
+
+to {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+}
+
+.stat-card,
+.dashboard-panel {
+animation: dashboardAppear .6s ease both;
+}
+
+.stat-card:nth-child(1) {
+animation-delay: .05s;
+}
+
+.stat-card:nth-child(2) {
+animation-delay: .10s;
+}
+
+.stat-card:nth-child(3) {
+animation-delay: .15s;
+}
+
+.stat-card:nth-child(4) {
+animation-delay: .20s;
+}
+
+/* =========================================================
+REDUCIR ANIMACIONES SI EL USUARIO LO PREFIERE
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+*,
+*::before,
+*::after {
+    animation: none !important;
+    transition: none !important;
+}
+
+}
+
+</style> <div class="dashboard-container">
+<!-- =====================================================
+     ENCABEZADO
+====================================================== -->
+
+<div class="dashboard-header">
+
+    <div>
+
+        <h1 class="dashboard-title">
+            <i class="fas fa-chart-line"></i>
+            Dashboard
+        </h1>
+
+        <p class="dashboard-subtitle">
+            Resumen general de tu inventario
+        </p>
+
+    </div>
+
+    <div class="dashboard-date">
+
+        <i class="fas fa-calendar-days"></i>
+
+        Hoy
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+     ESTADÍSTICAS
+====================================================== -->
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+
+        <div class="stat-icon">
+            <i class="fas fa-boxes-stacked"></i>
         </div>
 
-        <div class="dashboard-date">
+        <h4>
+            Productos
+        </h4>
 
-            <i class="fas fa-calendar-days"></i>
-
-            Hoy
-
+        <div class="stat-number">
+            {{ total_productos|default(0) }}
         </div>
 
     </div>
 
+    <div class="stat-card">
 
-    <!-- =========================================
-         ESTADÍSTICAS
-    ========================================== -->
-
-    <div class="stats-grid">
-
-        <!-- PRODUCTOS -->
-
-        <div class="stat-card">
-
-            <div class="stat-icon">
-                <i class="fas fa-boxes-stacked"></i>
-            </div>
-
-            <h4>
-                Productos
-            </h4>
-
-            <div class="stat-number">
-                {{ total_productos|default(0) }}
-            </div>
-
+        <div class="stat-icon">
+            <i class="fas fa-cubes"></i>
         </div>
 
+        <h4>
+            Unidades en Stock
+        </h4>
 
-        <!-- STOCK -->
-
-        <div class="stat-card">
-
-            <div class="stat-icon">
-                <i class="fas fa-cubes"></i>
-            </div>
-
-            <h4>
-                Unidades en Stock
-            </h4>
-
-            <div class="stat-number">
-                {{ total_stock|default(0) }}
-            </div>
-
-        </div>
-
-
-        <!-- ENTRADAS -->
-
-        <div class="stat-card">
-
-            <div class="stat-icon">
-                <i class="fas fa-arrow-trend-up"></i>
-            </div>
-
-            <h4>
-                Entradas
-            </h4>
-
-            <div class="stat-number">
-                {{ total_entradas|default(0) }}
-            </div>
-
-        </div>
-
-
-        <!-- SALIDAS -->
-
-        <div class="stat-card">
-
-            <div class="stat-icon">
-                <i class="fas fa-arrow-trend-down"></i>
-            </div>
-
-            <h4>
-                Salidas
-            </h4>
-
-            <div class="stat-number">
-                {{ total_salidas|default(0) }}
-            </div>
-
+        <div class="stat-number">
+            {{ total_stock|default(0) }}
         </div>
 
     </div>
 
+    <div class="stat-card">
 
-    <!-- =========================================
-         CONTENIDO
-    ========================================== -->
+        <div class="stat-icon">
+            <i class="fas fa-arrow-trend-up"></i>
+        </div>
 
-    <div class="dashboard-grid">
+        <h4>
+            Entradas
+        </h4>
 
+        <div class="stat-number">
+            {{ total_entradas|default(0) }}
+        </div>
 
-        <!-- =====================================
-             ACCIONES RÁPIDAS
-        ====================================== -->
+    </div>
 
-        <div class="dashboard-panel">
+    <div class="stat-card">
 
-            <div class="panel-title">
+        <div class="stat-icon">
+            <i class="fas fa-arrow-trend-down"></i>
+        </div>
 
-                <h2>
-                    <i class="fas fa-bolt"></i>
-                    Acciones rápidas
-                </h2>
+        <h4>
+            Salidas
+        </h4>
 
-            </div>
+        <div class="stat-number">
+            {{ total_salidas|default(0) }}
+        </div>
 
+    </div>
 
-            <div class="quick-actions">
+</div>
 
-                <!-- AGREGAR PRODUCTO -->
+<!-- =====================================================
+     CONTENIDO PRINCIPAL
+====================================================== -->
 
-                <a
-                    href="{{ url_for('crear_producto') }}"
-                    class="quick-action"
-                >
+<div class="dashboard-grid">
 
-                    <div class="quick-icon">
-                        <i class="fas fa-plus"></i>
-                    </div>
+    <!-- =================================================
+         ACCIONES
+    ================================================== -->
 
-                    <div>
+    <div class="dashboard-panel">
 
-                        <strong>
-                            Agregar producto
-                        </strong>
+        <div class="panel-title">
 
-                        <span>
-                            Registrar nuevo producto
-                        </span>
+            <h2>
+                <i class="fas fa-bolt"></i>
+                Acciones rápidas
+            </h2>
 
-                    </div>
+        </div>
 
-                </a>
+        <div class="quick-actions">
 
+            <a
+                href="{{ url_for('crear_producto') }}"
+                class="quick-action"
+            >
 
-                <!-- VER PRODUCTOS -->
+                <div class="quick-icon">
+                    <i class="fas fa-plus"></i>
+                </div>
 
-                <a
-                    href="{{ url_for('ver_productos') }}"
-                    class="quick-action"
-                >
+                <div>
 
-                    <div class="quick-icon">
-                        <i class="fas fa-boxes-stacked"></i>
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Ver productos
-                        </strong>
-
-                        <span>
-                            Consultar inventario
-                        </span>
-
-                    </div>
-
-                </a>
-
-
-                <!-- MOVIMIENTOS -->
-
-                <a
-                    href="{{ url_for('ver_movimientos') }}"
-                    class="quick-action"
-                >
-
-                    <div class="quick-icon">
-                        <i class="fas fa-right-left"></i>
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Movimientos
-                        </strong>
-
-                        <span>
-                            Entradas y salidas
-                        </span>
-
-                    </div>
-
-                </a>
-
-
-                <!-- NUEVO MOVIMIENTO -->
-
-                <a
-                    href="{{ url_for('crear_categoria') }}"
-                    class="quick-action"
-                >
-
-                    <div class="quick-icon">
-                        <i class="fas fa-tags"></i>
-                    </div>
-
-                    <div>
-                        <strong>
-                            Crear categoría
-                        </strong>
-
-                        <span>
-                            Agregar una nueva categoría
-                        </span>
-                    </div>
-
-                </a>
-
-            </div>
-
-
-            <!-- =====================================
-                 ESTADO DEL INVENTARIO
-            ====================================== -->
-
-            <div class="stock-box">
-
-                <div class="stock-header">
+                    <strong>
+                        Agregar producto
+                    </strong>
 
                     <span>
-                        Estado del inventario
-                    </span>
-
-                    <span>
-                        {{ stock_porcentaje|default(0) }}%
+                        Registrar nuevo producto
                     </span>
 
                 </div>
 
+            </a>
 
-                <div class="stock-bar">
+            <a
+                href="{{ url_for('ver_productos') }}"
+                class="quick-action"
+            >
 
-                    <div
-                        class="stock-progress"
-                        style="width: {{ stock_porcentaje|default(0) }}%;"
-                    ></div>
-
+                <div class="quick-icon">
+                    <i class="fas fa-boxes-stacked"></i>
                 </div>
 
-            </div>
+                <div>
 
-
-            <!-- =====================================
-                 ALERTA STOCK
-            ====================================== -->
-
-            {% if productos_stock_bajo|default(0) > 0 %}
-
-                <div class="stock-alert">
-
-                    <i class="fas fa-triangle-exclamation"></i>
+                    <strong>
+                        Ver productos
+                    </strong>
 
                     <span>
-
-                        Hay
-
-                        <strong>
-                            {{ productos_stock_bajo }}
-                        </strong>
-
-                        producto(s) con stock bajo.
-
+                        Consultar inventario
                     </span>
 
                 </div>
+
+            </a>
+
+            <a
+                href="{{ url_for('ver_movimientos') }}"
+                class="quick-action"
+            >
+
+                <div class="quick-icon">
+                    <i class="fas fa-right-left"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        Movimientos
+                    </strong>
+
+                    <span>
+                        Entradas y salidas
+                    </span>
+
+                </div>
+
+            </a>
+
+            <a
+                href="{{ url_for('crear_categoria') }}"
+                class="quick-action"
+            >
+
+                <div class="quick-icon">
+                    <i class="fas fa-tags"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        Crear categoría
+                    </strong>
+
+                    <span>
+                        Agregar una nueva categoría
+                    </span>
+
+                </div>
+
+            </a>
+
+        </div>
+
+        <!-- =============================================
+             ESTADO
+        ============================================== -->
+
+        <div class="stock-box">
+
+            <div class="stock-header">
+
+                <span>
+                    Estado del inventario
+                </span>
+
+                <span>
+                    {{ stock_porcentaje|default(0) }}%
+                </span>
+
+            </div>
+
+            <div class="stock-bar">
+
+                <div
+                    class="stock-progress"
+                    style="width: {{ stock_porcentaje|default(0) }}%;"
+                ></div>
+
+            </div>
+
+        </div>
+
+        <!-- =============================================
+             ALERTA
+        ============================================== -->
+
+        {% if productos_stock_bajo|default(0) > 0 %}
+
+            <div class="stock-alert">
+
+                <i class="fas fa-triangle-exclamation"></i>
+
+                <span>
+
+                    Hay
+
+                    <strong>
+                        {{ productos_stock_bajo }}
+                    </strong>
+
+                    producto(s) con stock bajo.
+
+                </span>
+
+            </div>
+
+        {% else %}
+
+            <div
+                class="stock-alert"
+                style="
+                    background: linear-gradient(
+                        145deg,
+                        #effff4,
+                        #ddf8e7
+                    );
+                    border-color: #bce8ca;
+                    color: #176b3a;
+                "
+            >
+
+                <i
+                    class="fas fa-circle-check"
+                    style="color:#078b47;"
+                ></i>
+
+                <span>
+                    No hay productos con stock bajo.
+                </span>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- =================================================
+         MOVIMIENTOS
+    ================================================== -->
+
+    <div class="dashboard-panel">
+
+        <div class="panel-title">
+
+            <h2>
+
+                <i class="fas fa-clock-rotate-left"></i>
+
+                Movimientos recientes
+
+            </h2>
+
+            <a
+                href="{{ url_for('ver_movimientos') }}"
+                class="btn-dashboard"
+            >
+
+                Ver todos
+
+                <i class="fas fa-arrow-right"></i>
+
+            </a>
+
+        </div>
+
+        <div class="movement-list">
+
+            {% if movimientos_recientes|default([]) %}
+
+                {% for movimiento in movimientos_recientes %}
+
+                    <div class="movement">
+
+                        <div class="movement-info">
+
+                            <div
+                                class="movement-icon
+                                {% if movimiento.tipo_de_movimiento == 'Entrada' %}
+                                    entrada
+                                {% else %}
+                                    salida
+                                {% endif %}"
+                            >
+
+                                {% if movimiento.tipo_de_movimiento == 'Entrada' %}
+
+                                    <i class="fas fa-arrow-down"></i>
+
+                                {% else %}
+
+                                    <i class="fas fa-arrow-up"></i>
+
+                                {% endif %}
+
+                            </div>
+
+                            <div>
+
+                                <div class="movement-name">
+
+                                    {% if movimiento.producto %}
+
+                                        {{ movimiento.producto.descripcion }}
+
+                                    {% else %}
+
+                                        Producto no disponible
+
+                                    {% endif %}
+
+                                </div>
+
+                                <div class="movement-date">
+
+                                    {% if movimiento.fecha %}
+
+                                        {{ movimiento.fecha.strftime('%d/%m/%Y %H:%M') }}
+
+                                    {% else %}
+
+                                        Sin fecha
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="movement-value
+                            {% if movimiento.tipo_de_movimiento == 'Entrada' %}
+                                positive
+                            {% else %}
+                                negative
+                            {% endif %}"
+                        >
+
+                            {% if movimiento.tipo_de_movimiento == 'Entrada' %}
+
+                                +{{ movimiento.cantida_stock }}
+
+                            {% elif movimiento.tipo_de_movimiento == 'Salida' %}
+
+                                -{{ movimiento.cantida_stock }}
+
+                            {% else %}
+
+                                {{ movimiento.cantida_stock }}
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
 
             {% else %}
 
-                <div
-                    class="stock-alert"
-                    style="
-                        background: #e9f8ef;
-                        border-color: #bce8ca;
-                        color: #176b3a;
-                    "
-                >
+                <div class="movement">
 
-                    <i
-                        class="fas fa-circle-check"
-                        style="color:#078b47;"
-                    ></i>
+                    <div class="movement-info">
 
-                    <span>
-                        No hay productos con stock bajo.
-                    </span>
+                        <div class="movement-icon entrada">
+
+                            <i class="fas fa-info"></i>
+
+                        </div>
+
+                        <div>
+
+                            <div class="movement-name">
+                                Sin movimientos
+                            </div>
+
+                            <div class="movement-date">
+                                Todavía no hay movimientos registrados.
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -914,178 +1492,9 @@
 
         </div>
 
-
-        <!-- =====================================
-             MOVIMIENTOS RECIENTES
-        ====================================== -->
-
-        <div class="dashboard-panel">
-
-            <div class="panel-title">
-
-                <h2>
-
-                    <i class="fas fa-clock-rotate-left"></i>
-
-                    Movimientos recientes
-
-                </h2>
-
-
-                <a
-                    href="{{ url_for('ver_movimientos') }}"
-                    class="btn-dashboard"
-                >
-
-                    Ver todos
-
-                    <i class="fas fa-arrow-right"></i>
-
-                </a>
-
-            </div>
-
-
-            <div class="movement-list">
-
-                {% if movimientos_recientes|default([]) %}
-
-                    {% for movimiento in movimientos_recientes %}
-
-                        <div class="movement">
-
-                            <div class="movement-info">
-
-                                <!-- ICONO -->
-
-                                <div
-                                    class="movement-icon
-                                    {% if movimiento.tipo_de_movimiento == 'Entrada' %}
-                                        entrada
-                                    {% else %}
-                                        salida
-                                    {% endif %}"
-                                >
-
-                                    {% if movimiento.tipo_de_movimiento == 'Entrada' %}
-
-                                        <i class="fas fa-arrow-down"></i>
-
-                                    {% else %}
-
-                                        <i class="fas fa-arrow-up"></i>
-
-                                    {% endif %}
-
-                                </div>
-
-
-                                <!-- INFORMACIÓN -->
-
-                                <div>
-
-                                    <div class="movement-name">
-
-                                        {% if movimiento.producto %}
-
-                                            {{ movimiento.producto.descripcion }}
-
-                                        {% else %}
-
-                                            Producto no disponible
-
-                                        {% endif %}
-
-                                    </div>
-
-
-                                    <div class="movement-date">
-
-                                        {% if movimiento.fecha %}
-
-                                            {{ movimiento.fecha.strftime('%d/%m/%Y %H:%M') }}
-
-                                        {% else %}
-
-                                            Sin fecha
-
-                                        {% endif %}
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-
-                            <!-- CANTIDAD -->
-
-                            <div
-                                class="movement-value
-                                {% if movimiento.tipo_de_movimiento == 'Entrada' %}
-                                    positive
-                                {% else %}
-                                    negative
-                                {% endif %}"
-                            >
-
-                                {% if movimiento.tipo_de_movimiento == 'Entrada' %}
-
-                                    +{{ movimiento.cantida_stock }}
-
-                                {% elif movimiento.tipo_de_movimiento == 'Salida' %}
-
-                                    -{{ movimiento.cantida_stock }}
-
-                                {% else %}
-
-                                    {{ movimiento.cantida_stock }}
-
-                                {% endif %}
-
-                            </div>
-
-                        </div>
-
-                    {% endfor %}
-
-                {% else %}
-
-                    <div class="movement">
-
-                        <div class="movement-info">
-
-                            <div class="movement-icon entrada">
-
-                                <i class="fas fa-info"></i>
-
-                            </div>
-
-                            <div>
-
-                                <div class="movement-name">
-                                    Sin movimientos
-                                </div>
-
-                                <div class="movement-date">
-                                    Todavía no hay movimientos registrados.
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                {% endif %}
-
-            </div>
-
-        </div>
-
     </div>
 
 </div>
 
-
+</div>
 {% endblock contenido %}
